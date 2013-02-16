@@ -49,6 +49,10 @@ else{
 	    $act=$_GET[act];
 		$lokasi_file = $_FILES['fupload']['tmp_name'];
  		$nama_file   = $_FILES['fupload']['name'];
+		//awb
+		$lokasi_file_awb=$_FILES['file_awb']['tmp_name'];
+		$nama_file_awb=$_FILES['file_awb']['name'];
+		
 	switch($file_extension){
 			case "pdf": $ctype="application/pdf"; break;
 			case "exe": $ctype="application/octet-stream"; break;
@@ -67,11 +71,12 @@ else{
 				window.location=('../../media.php?module=download')</script>";
 		  }else{
 		  		UploadFile($nama_file);
+				UploadFile($nama_file_awb);
 		  		if ($_POST[status_order]=='Pengambilan'){ 
 				// Update status order
 					 mysql_query("UPDATE orders SET tgl_pengambilan='".$tgl_skrg."',jam_pengambilan='".$jam_skrg."', pic_penerima='".$_POST[penerima]."',
 							pic_penyerah_barang='".$_POST[penyerah_barang]."', status_order='".$_POST[status_order]."',nama_file='$nama_file', 
-							id_wo='".$_POST[id_wo]."' where id_orders='".$_POST[id]."'");
+							id_wo='".$_POST[id_wo]."',kode_awb='".$_POST[kode_awb]."',file_awb='$nama_file_awb' where id_orders='".$_POST[id]."'");
 							header('location:../../media.php?module='.$module);	
 				}else{
 				// Update untuk menambah stok

@@ -46,7 +46,7 @@ elseif ($module=='keranjang' AND $act=='hapus'){
 
 elseif ($module=='keranjang' AND $act=='update'){
   $id       = $_POST[id];
-  $nama_project  = $_POST[nama_project];
+  /*$nama_project  = $_POST[nama_project];*/
   $jml_data = count($id);
   $jumlah   = $_POST[jml]; // quantity
   for ($i=1; $i <= $jml_data; $i++){
@@ -61,9 +61,10 @@ elseif ($module=='keranjang' AND $act=='update'){
         window.location=('proses-order.html')</script>";
     }
     else{
-      mysql_query("UPDATE orders_temp SET jumlah = '".$jumlah[$i]."', nama_project='".$nama_project."'
+      mysql_query("UPDATE orders_temp SET jumlah = '".$jumlah[$i]."'
                                       WHERE id_orders_temp = '".$id[$i]."'");
-      header('Location:proses-order.html');
+     
+	  header('Location:proses-order.html');
     }
   }
   }

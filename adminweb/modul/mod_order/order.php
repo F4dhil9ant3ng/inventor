@@ -90,12 +90,12 @@ switch($_GET[act]){
           </table></form>";
 
   // tampilkan rincian produk yang di order
-  $sql2=mysql_query("SELECT * FROM orders_detail, produk 
-                     WHERE orders_detail.id_produk=produk.id_produk 
+  $sql2=mysql_query("SELECT * FROM orders_detail, produk,orders 
+                     WHERE orders_detail.id_produk=produk.id_produk and orders.id_orders=orders_detail.id_orders 
                      AND orders_detail.id_orders='$_GET[id]'");
   
   echo "<table border=0 width=500>
-        <tr><th>Nama Produk</th><th>Project</th><th>Berat(kg)</th><th>Jumlah</th><th>Harga Satuan</th><th>Sub Total</th></tr>";
+        <tr><th>Nama Produk</th><th>Use For</th><th>Berat(kg)</th><th>Jumlah</th><th>Harga Satuan</th><th>Sub Total</th></tr>";
   
   while($s=mysql_fetch_array($sql2)){
      // rumus untuk menghitung subtotal dan total		
@@ -112,7 +112,7 @@ switch($_GET[act]){
    $subtotalberat = $s[berat] * $s[jumlah]; // total berat per item produk 
    $totalberat  = $totalberat + $subtotalberat; // grand total berat all produk yang dibeli
 
-    echo "<tr><td>$s[merk]</td><td>$s[nama_project]</td><td align=center>$s[berat]</td><td align=center>$s[jumlah]</td>
+    echo "<tr><td>$s[merk]</td><td>$s[use_for]</td><td align=center>$s[berat]</td><td align=center>$s[jumlah]</td>
               <td align=right>$harga</td><td align=right>$subtotal_rp</td></tr>";
   }
 
@@ -182,17 +182,19 @@ echo "<tr><td colspan=5 align=right>Total              Rp. : </td><td align=righ
 		  <tr><td>PIC Yang Menyerahkan Barang</td> <td> : <input type=text name=penyerah_barang size=35></td></tr>
 		  <tr><td>Id Wo</td> <td> : <input type=text name=id_wo size=30></td></tr>
 		  <tr><td>Bukti Serah Terima Barang</td><td> : <input type=file name='fupload' size=40></td></tr> 
+		   <tr><td>Kode AWB</td> <td> : <input type=text name=kode_awb size=30></td></tr>
+		  <tr><td>Bukti AWB</td><td> :  <input type=file name='file_awb' size=40></td></tr> 
           <tr><td>Status Order  </td><td >: <select name=status_order readonly=true>$pilihan_order</select> 
           <input type=submit value='Submit'><input type=button value=Kembali onclick=self.history.back()></td></tr>
           </table></form>";
 
   // tampilkan rincian produk yang di order
-  $sql2=mysql_query("SELECT * FROM orders_detail, produk 
-                     WHERE orders_detail.id_produk=produk.id_produk 
+  $sql2=mysql_query("SELECT * FROM orders_detail, produk ,orders
+                     WHERE orders_detail.id_produk=produk.id_produk and orders.id_orders=orders_detail.id_orders 
                      AND orders_detail.id_orders='$_GET[id]'");
   
   echo "<table border=0 width=500>
-        <tr><th>Nama Produk</th><th>Project</th><th>Berat(kg)</th><th>Jumlah</th><th>Harga Satuan</th><th>Sub Total</th></tr>";
+        <tr><th>Nama Produk</th><th>Use For</th><th>Berat(kg)</th><th>Jumlah</th><th>Harga Satuan</th><th>Sub Total</th></tr>";
   
   while($s=mysql_fetch_array($sql2)){
      // rumus untuk menghitung subtotal dan total		
@@ -209,7 +211,7 @@ echo "<tr><td colspan=5 align=right>Total              Rp. : </td><td align=righ
    $subtotalberat = $s[berat] * $s[jumlah]; // total berat per item produk 
    $totalberat  = $totalberat + $subtotalberat; // grand total berat all produk yang dibeli
 
-    echo "<tr><td>$s[merk]</td><td>$s[nama_project]</td><td align=center>$s[berat]</td><td align=center>$s[jumlah]</td>
+    echo "<tr><td>$s[merk]</td><td>$s[use_for]</td><td align=center>$s[berat]</td><td align=center>$s[jumlah]</td>
               <td align=right>$harga</td><td align=right>$subtotal_rp</td></tr>";
   }
 
@@ -272,12 +274,12 @@ echo "<tr><td colspan=5 align=right>Total              Rp. : </td><td align=righ
 			  </table>";
 	
 	  // tampilkan rincian produk yang di order
-	  $sql2=mysql_query("SELECT * FROM orders_detail, produk 
-						 WHERE orders_detail.id_produk=produk.id_produk 
+	  $sql2=mysql_query("SELECT * FROM orders_detail, produk ,orders
+						 WHERE orders_detail.id_produk=produk.id_produk and orders.id_orders=orders_detail.id_orders 
 						 AND orders_detail.id_orders='$_GET[id]'");
 	  
 	  echo "<table border=0 width=500>
-			<tr><th>Nama Produk</th><th>Project</th><th>Berat(kg)</th><th>Jumlah</th><th>Harga Satuan</th><th>Sub Total</th></tr>";
+			<tr><th>Nama Produk</th><th>Use For</th><th>Berat(kg)</th><th>Jumlah</th><th>Harga Satuan</th><th>Sub Total</th></tr>";
 	  
 	  while($s=mysql_fetch_array($sql2)){
 		 // rumus untuk menghitung subtotal dan total		
@@ -294,7 +296,7 @@ echo "<tr><td colspan=5 align=right>Total              Rp. : </td><td align=righ
 	   $subtotalberat = $s[berat] * $s[jumlah]; // total berat per item produk 
 	   $totalberat  = $totalberat + $subtotalberat; // grand total berat all produk yang dibeli
 	
-		echo "<tr><td>$s[merk]</td><td>$s[nama_project]</td><td align=center>$s[berat]</td><td align=center>$s[jumlah]</td>
+		echo "<tr><td>$s[merk]</td><td>$s[use_for]</td><td align=center>$s[berat]</td><td align=center>$s[jumlah]</td>
 				  <td align=right>$harga</td><td align=right>$subtotal_rp</td></tr>";
 	  }
 	
@@ -360,18 +362,21 @@ echo "<tr><td colspan=5 align=right>Total              Rp. : </td><td align=righ
 			  <tr><td>Tgl. & Jam Order</td> <td> : $tanggal & $r[jam_order]</td></tr>
 			  <tr><td>PIC Penerima Barang</td> <td> : $r[pic_penerima]</td></tr>
 			  <tr><td>PIC Yang Menyerahkan Barang</td> <td> : $r[pic_penyerah_barang]</td></tr>
+			  <tr><td>Kode Wo</td> <td> : $r[id_wo]</td></tr>
 			  <tr><td>Bukti Serah Terima Barang</td> <td> : <a href='../downlot.php?file=$r[nama_file]'>$r[nama_file]</a></td></tr>
+			  <tr><td>Kode AWB</td> <td> : $r[kode_awb]</td></tr>
+			  <tr><td>Bukti File AWB</td> <td> : <a href='../downlot.php?file=$r[file_awb]'>$r[file_awb]</a></td></tr>
 			  <tr><td>Status Order      </td><td >: <select name=status_order readonly=true>$pilihan_order</select> 
 			  <input type=button value=Kembali onclick=self.history.back()></td></tr>
 			  </table>";
 	
 	  // tampilkan rincian produk yang di order
-	  $sql2=mysql_query("SELECT * FROM orders_detail, produk 
-						 WHERE orders_detail.id_produk=produk.id_produk 
+	  $sql2=mysql_query("SELECT * FROM orders_detail, produk ,orders
+						 WHERE orders_detail.id_produk=produk.id_produk and orders.id_orders=orders_detail.id_orders 
 						 AND orders_detail.id_orders='$_GET[id]'");
 	  
 	  echo "<table border=0 width=500>
-			<tr><th>Nama Produk</th><th>Project</th><th>Berat(kg)</th><th>Jumlah</th><th>Harga Satuan</th><th>Sub Total</th></tr>";
+			<tr><th>Nama Produk</th><th>Use For</th><th>Berat(kg)</th><th>Jumlah</th><th>Harga Satuan</th><th>Sub Total</th></tr>";
 	  
 	  while($s=mysql_fetch_array($sql2)){
 		 // rumus untuk menghitung subtotal dan total		
@@ -388,7 +393,7 @@ echo "<tr><td colspan=5 align=right>Total              Rp. : </td><td align=righ
 	   $subtotalberat = $s[berat] * $s[jumlah]; // total berat per item produk 
 	   $totalberat  = $totalberat + $subtotalberat; // grand total berat all produk yang dibeli
 	
-		echo "<tr><td>$s[merk]</td><td>$s[nama_project]</td><td align=center>$s[berat]</td><td align=center>$s[jumlah]</td>
+		echo "<tr><td>$s[merk]</td><td>$s[use_for]</td><td align=center>$s[berat]</td><td align=center>$s[jumlah]</td>
 				  <td align=right>$harga</td><td align=right>$subtotal_rp</td></tr>";
 	  }
 	

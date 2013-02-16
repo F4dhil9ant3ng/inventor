@@ -376,7 +376,7 @@ elseif ($_GET[module]=='keranjangbelanja'){
           <form method=post action=aksi.php?module=keranjang&act=update>
           <table width=90% border=0 cellpadding=3 align=center>
           <tbody>
-          <tr background='images/bg_tab.jpg' align=center height=23><th>No</th><th>Perangkat</th><th>Nama Perangkat</th><th>Serial Number</th><th>Qty</th><th>Project</th>
+          <tr background='images/bg_tab.jpg' align=center height=23><th>No</th><th>Perangkat</th><th>Nama Perangkat</th><th>Serial Number</th><th>Qty</th>
           <th>Hapus</th></tr>";  
   
   $no=1;
@@ -404,13 +404,12 @@ elseif ($_GET[module]=='keranjangbelanja'){
               }
 			 
         echo "</select></td>				
-                <td><input type=text name='nama_project' value=$r[nama_project] onchange=\"this.form.submit()\" size=18></td>
               <td align=center><a href='aksi.php?module=keranjang&act=hapus&id=$r[id_orders_temp]'>
               <img src=images/kali.png border=0 title=Hapus></a></td>
           </tr>";
     $no++; 
   } 
-  echo "<tr><td colspan=5 align=right><br><b>Total</b>:</td><td colspan=2><br>Rp. <b>$total_rp</b></td></tr>
+  echo "<tr><td colspan=4 align=right><br><b>Total</b>:</td><td colspan=2><br>Rp. <b>$total_rp</b></td></tr>
         <tr><td colspan=3><br /><a href='javascript:history.go(-1)' class='button'>Lanjutkan Order</a><br /></td>";		
   echo "</tr>
         </tbody></table></form><br />
@@ -443,6 +442,18 @@ elseif ($_GET[module]=='keranjangbelanja'){
 				<td>Email</td>
 				<td>:</td>
 				<td><input type=text name='email_pelanggan' size=40></td>
+			</tr>
+			<tr>
+				<td>Use For</td>
+				<td>:</td>
+				<td><select name='use_for'>
+						<option value='PROVISIONING REGULER'>PROVISIONING REGULER</option>
+						<option value='PROVISIONING PROJECT'>PROVISIONING PROJECT</option>
+						<option value='TROUBLE HANDLING'>TROUBLE HANDLING</option>
+						<option value='IMPROVEMENT'>IMPROVEMENT</option>
+						<option value='OTHER'>OTHER</option>
+					</select>
+				</td>
 			</tr>
 			<tr>";
 				if(!isset($_SESSION['nik']) && empty($_SESSION['nik'])){
@@ -971,6 +982,7 @@ elseif ($_GET[module]=='simpantransaksimember'){
 	  $pic_pelanggan	= $_POST[pic_pelanggan];
 	  $no_hp_pelanggan	= $_POST[no_hp_pelanggan];
 	  $email_pelanggan	= $_POST[email_pelanggan];
+	  $use_for			= $_POST[use_for];
 	  
 	// fungsi untuk mendapatkan isi keranjang belanja
 	function isi_keranjang(){
@@ -988,9 +1000,9 @@ elseif ($_GET[module]=='simpantransaksimember'){
 	$jam_skrg = date("H:i:s");
 
 	// simpan data pemesanan 
-	mysql_query("INSERT INTO orders(tgl_order,jam_order,nik,nama_pelanggan,alamat_pelanggan,pic_pelanggan,no_hp_pelanggan,email_pelanggan) 
+	mysql_query("INSERT INTO orders(tgl_order,jam_order,nik,nama_pelanggan,alamat_pelanggan,pic_pelanggan,no_hp_pelanggan,email_pelanggan,use_for) 
 				VALUES('$tgl_skrg','$jam_skrg','".$_SESSION['nik']."','".$nama_pelanggan."','".$alamat_pelanggan."',
-				'".$pic_pelanggan."','".$no_hp_pelanggan."','".$email_pelanggan."')");
+				'".$pic_pelanggan."','".$no_hp_pelanggan."','".$email_pelanggan."','".$use_for."')");
 	
 	  
 	// mendapatkan nomor orders
@@ -1077,16 +1089,16 @@ elseif ($_GET[module]=='simpantransaksimember'){
 				<div class='bottom_prod_box_big'></div>
 			  </div>";    
 }else if ($_GET[module]=='detailorder'){
-	$daftarproduk=mysql_query("SELECT * FROM orders_detail,produk 
-                                 WHERE orders_detail.id_produk=produk.id_produk 
-                                 AND id_orders='".$_GET[id]."'");
+	$daftarproduk=mysql_query("SELECT * FROM orders_detail,produk,orders 
+                                 WHERE orders_detail.id_produk=produk.id_produk and orders.id_orders=orders_detail.id_orders
+                                 AND orders_detail.id_orders='".$_GET[id]."'");
 
 echo "<div class='prod_box_big'>
         	<div class='top_prod_box_big'></div>
         <div class='center_prod_box_big'>            
           <div class='details_big_cari'>
               <div><table cellpadding=10>
-      <tr bgcolor=#6da6b1><th>No</th><th>Nama Produk</th><th>Project</th><th>Berat(Kg)</th><th>Qty</th><th>Harga Satuan</th><th>Sub Total</th></tr>";        
+      <tr bgcolor=#6da6b1><th>No</th><th>Nama Produk</th><th>Use For</th><th>Berat(Kg)</th><th>Qty</th><th>Harga Satuan</th><th>Sub Total</th></tr>";        
 $no=1;
 while ($d=mysql_fetch_array($daftarproduk)){
    $disc        = ($d[diskon]/100)*$d[harga];
@@ -1102,7 +1114,7 @@ while ($d=mysql_fetch_array($daftarproduk)){
    $total_rp    = format_rupiah($total);    
    $harga       = format_rupiah($d[harga]);
 	
-   echo "<tr bgcolor=#dad0d0><td>$no</td><td>$d[merk]</td><td>$d[nama_project]</td><td align=center>$d[berat]</td><td align=center>$d[jumlah]</td>
+   echo "<tr bgcolor=#dad0d0><td>$no</td><td>$d[merk]</td><td>$d[use_for]</td><td align=center>$d[berat]</td><td align=center>$d[jumlah]</td>
                              <td align=right>$harga</td><td align=right>$subtotal_rp</td></tr>";
 
    $pesan.="$d[jumlah] $d[nama_produk] -> Rp. $harga -> Subtotal: Rp. $subtotal_rp <br />";
