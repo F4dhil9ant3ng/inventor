@@ -159,6 +159,7 @@ switch($_GET[act]){
 		  <tr><td>Berat</td>     <td> : <input type=text name='berat' size=3> KG</td></tr>
           <tr><td>Harga</td>     <td> : <input type=text name='harga' size=10></td></tr> 
           <tr><td>Stok</td>     <td> : <input type=text name='stok' size=3></td></tr>
+		  <tr><td>Buffer</td>     <td> : <input type=text name='buffer' size=3></td></tr>
           <tr><td>Spesification</td>  <td> <textarea name='spesification' style='width: 580px; height: 350px;'></textarea></td></tr>
           <tr><td>Gambar</td>      <td> : <input type=file name='fupload' size=40> 
                                           <br>Tipe gambar harus JPG/JPEG dan ukuran lebar maks: 400 px</td></tr>
@@ -201,6 +202,7 @@ switch($_GET[act]){
           <tr><td>Berat</td>     <td> : <input type=text name='berat' value=$r[berat] size=3> KG</td></tr>
           <tr><td>Harga</td>     <td> : <input type=text name='harga' value=$r[harga] size=10></td></tr>
           <tr><td>Stok</td>     <td> : <input type=text name='stok' value=$r[stok] size=3></td></tr>
+		  <tr><td>Buffer</td>     <td> : <input type=text name='buffer' value=$r[stok] size=3></td></tr>
           <tr><td>Deskripsi</td>   <td> <textarea name='deskripsi' style='width: 600px; height: 350px;'>$r[deskripsi]</textarea></td></tr>
           <tr><td>Gambar</td>       <td> :  
           <img src='../foto_produk/small_$r[gambar]'></td></tr>

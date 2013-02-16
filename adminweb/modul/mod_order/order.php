@@ -1,3 +1,20 @@
+ <script type="text/javascript">
+		function disabledd(input)	{
+			if (input == "Fe")
+			{
+				document.getElementById('fe_pic').disabled = false;
+				document.getElementById('nama_pic_tipe').disabled = false;
+				document.getElementById('kode_awab').disabled = true;
+				document.getElementById('file_awab').disabled = true;
+			}else if (input == "Mover"){
+				document.getElementById('fe_pic').disabled = true;
+				document.getElementById('nama_pic_tipe').disabled = true;
+				document.getElementById('kode_awab').disabled = false;
+				document.getElementById('file_awab').disabled = false;
+				}
+			}
+		 </script>
+		 
 <?php
 session_start();
  if (empty($_SESSION['username']) AND empty($_SESSION['passuser'])){
@@ -7,6 +24,7 @@ session_start();
 }
 else{
 $aksi="modul/mod_order/aksi_order.php";
+ 	 
 switch($_GET[act]){
   // Tampil Order
   default:
@@ -146,6 +164,7 @@ echo "<tr><td colspan=5 align=right>Total              Rp. : </td><td align=righ
 	
 	//status approve
 	case "Approve":
+	
 	 		$edit = mysql_query("SELECT * FROM orders,kustomer WHERE orders.nik=kustomer.nik AND id_orders='$_GET[id]'");
     $r    = mysql_fetch_array($edit);
     $tanggal=tgl_indo($r[tgl_order]);
@@ -178,12 +197,31 @@ echo "<tr><td colspan=5 align=right>Total              Rp. : </td><td align=righ
           <table>
           <tr><td>No. Order</td>        <td> : $r[id_orders]</td></tr>
           <tr><td>Tgl. & Jam Order</td> <td> : $tanggal & $r[jam_order]</td></tr>
-		  <tr><td>PIC Penerima Barang</td> <td> : <input type=text name=penerima size=35></td></tr>
 		  <tr><td>PIC Yang Menyerahkan Barang</td> <td> : <input type=text name=penyerah_barang size=35></td></tr>
 		  <tr><td>Id Wo</td> <td> : <input type=text name=id_wo size=30></td></tr>
 		  <tr><td>Bukti Serah Terima Barang</td><td> : <input type=file name='fupload' size=40></td></tr> 
-		   <tr><td>Kode AWB</td> <td> : <input type=text name=kode_awb size=30></td></tr>
-		  <tr><td>Bukti AWB</td><td> :  <input type=file name='file_awb' size=40></td></tr> 
+		  <tr>
+		  	<td>Tipe PIC</td>
+			<td> : 
+		  		<input type=radio name='tipe_pic' value='Fe' onClick='disabledd(this.value);' checked=checked> FE
+	
+				<input type=radio name='tipe_pic' value='Mover' onClick='disabledd(this.value);'> Mover
+		  	</td>
+		  </tr>
+		  <tr>
+		  	<td>PIC Penerima</td> 
+					<td> : 
+						<select name=fe_pic selected id=fe_pic>
+							<option value=PROVISIONING>PROVISIONING</option>
+							<option value=TROUBLE HANDLING>TROUBLE HANDLING</option>
+							<option value=IMPROVEMENT>IMPROVEMENT</option>
+							<option value=OTHERS>OTHERS</option>
+						</select>
+						<input id=nama_pic_tipe type=text name=name_pic_fe size=30>
+					</td>
+		  </tr>
+		  <tr><td>Kode AWB</td> <td> : <input id=kode_awab type=text name=kode_awb size=30 disabled=true></td></tr>
+		  <tr><td>Bukti AWB</td><td> :  <input id=file_awab type=file name='file_awb' size=40 disabled=true></td></tr> 
           <tr><td>Status Order  </td><td >: <select name=status_order readonly=true>$pilihan_order</select> 
           <input type=submit value='Submit'><input type=button value=Kembali onclick=self.history.back()></td></tr>
           </table></form>";
@@ -329,7 +367,7 @@ echo "<tr><td colspan=5 align=right>Total              Rp. : </td><td align=righ
 		
 		//status Pengambilan
 	case "Pengambilan":
-				$edit = mysql_query("SELECT * FROM orders,kustomer WHERE orders.nik=kustomer.nik AND id_orders='$_GET[id]'");
+		$edit = mysql_query("SELECT * FROM orders,kustomer WHERE orders.nik=kustomer.nik AND id_orders='$_GET[id]'");
 		$r    = mysql_fetch_array($edit);
 		$tanggal=tgl_indo($r[tgl_order]);
 		
@@ -355,20 +393,45 @@ echo "<tr><td colspan=5 align=right>Total              Rp. : </td><td align=righ
 		}
 	
 		echo "<h2>Detail Order</h2>
-			  <input type=hidden name=id value=$r[id_orders]>
+			  <form method=POST action=$aksi?module=order&act=ambil enctype='multipart/form-data'>
+          	  <input type=hidden name=id value=$r[id_orders]>
 	
 			  <table>
 			  <tr><td>No. Order</td>        <td> : $r[id_orders]</td></tr>
 			  <tr><td>Tgl. & Jam Order</td> <td> : $tanggal & $r[jam_order]</td></tr>
-			  <tr><td>PIC Penerima Barang</td> <td> : $r[pic_penerima]</td></tr>
-			  <tr><td>PIC Yang Menyerahkan Barang</td> <td> : $r[pic_penyerah_barang]</td></tr>
-			  <tr><td>Kode Wo</td> <td> : $r[id_wo]</td></tr>
+			  <tr><td>PIC Yang Menyerahkan Barang</td> <td> : <input type=text name=penyerah_barang size=35 value=$r[pic_penyerah_barang]></td></tr>
+			  <tr><td>Id Wo</td> <td> : <input type=text name=id_wo size=30 value=$r[id_wo]></td></tr>
 			  <tr><td>Bukti Serah Terima Barang</td> <td> : <a href='../downlot.php?file=$r[nama_file]'>$r[nama_file]</a></td></tr>
-			  <tr><td>Kode AWB</td> <td> : $r[kode_awb]</td></tr>
-			  <tr><td>Bukti File AWB</td> <td> : <a href='../downlot.php?file=$r[file_awb]'>$r[file_awb]</a></td></tr>
-			  <tr><td>Status Order      </td><td >: <select name=status_order readonly=true>$pilihan_order</select> 
-			  <input type=button value=Kembali onclick=self.history.back()></td></tr>
-			  </table>";
+			  <tr><td>Bukti Serah Terima Barang</td><td> : <input type=file name='fupload' size=40></td></tr> 
+			  <tr><td colspan=2>*) Apabila file tidak diubah, dikosongkan saja.</td></tr>
+			  <tr>
+				<td>Tipe PIC</td>
+				<td> : 
+					<input type=radio name='tipe_pic' value='Fe' onClick='disabledd(this.value);' checked=checked> FE
+		
+					<input type=radio name='tipe_pic' value='Mover' onClick='disabledd(this.value);'> Mover
+				</td>
+			  </tr>
+			  <tr>
+				<td>PIC Penerima</td> 
+						<td> : 
+							<select name=fe_pic selected id=fe_pic>
+								<option value=PROVISIONING>PROVISIONING</option>
+								<option value=TROUBLE HANDLING>TROUBLE HANDLING</option>
+								<option value=IMPROVEMENT>IMPROVEMENT</option>
+								<option value=OTHERS>OTHERS</option>
+							</select>
+							<input id=nama_pic_tipe type=text name=name_pic_fe size=30>
+						</td>
+			  </tr>
+			  <tr><td>Kode AWB</td> <td> : <input id=kode_awab type=text name=kode_awb size=30 disabled=true></td></tr>
+			  <tr><td>Bukti AWB</td> <td> : <a href='../downlot.php?file=$r[file_awb]'>$r[file_awb]</a></td></tr>
+			  <tr><td>Bukti AWB</td><td> :  <input id=file_awab type=file name='file_awb' size=40 disabled=true></td></tr> 
+			  <tr><td colspan=2>*) Apabila file tidak diubah, dikosongkan saja.</td></tr>
+			  <tr><td>Status Order  </td><td >: <select name=status_order readonly=true>$pilihan_order</select> 
+			  <input type=submit value='Submit'><input type=button value=Kembali onclick=self.history.back()></td></tr>
+			  </table>
+			  </form>";
 	
 	  // tampilkan rincian produk yang di order
 	  $sql2=mysql_query("SELECT * FROM orders_detail, produk ,orders
@@ -376,7 +439,7 @@ echo "<tr><td colspan=5 align=right>Total              Rp. : </td><td align=righ
 						 AND orders_detail.id_orders='$_GET[id]'");
 	  
 	  echo "<table border=0 width=500>
-			<tr><th>Nama Produk</th><th>Use For</th><th>Berat(kg)</th><th>Jumlah</th><th>Harga Satuan</th><th>Sub Total</th></tr>";
+			<tr><th>Nama Produk</th><th>Use For</th><th>Berat(kg)</th><th>Jumlah</th><th>Harga Satuan</th><th>Sub Total</th><th>Status</th><th>Aksi</th></tr>";
 	  
 	  while($s=mysql_fetch_array($sql2)){
 		 // rumus untuk menghitung subtotal dan total		
@@ -394,7 +457,8 @@ echo "<tr><td colspan=5 align=right>Total              Rp. : </td><td align=righ
 	   $totalberat  = $totalberat + $subtotalberat; // grand total berat all produk yang dibeli
 	
 		echo "<tr><td>$s[merk]</td><td>$s[use_for]</td><td align=center>$s[berat]</td><td align=center>$s[jumlah]</td>
-				  <td align=right>$harga</td><td align=right>$subtotal_rp</td></tr>";
+				  <td align=right>$harga</td><td align=right>$subtotal_rp</td><td>$s[status]</td>
+				  <td><a href=?module=order&act=Return&id=$s[id_orders_detail]><img src=images/batal.jpg>Return</b></a></td></tr>";
 	  }
 	
 	  $ongkos=mysql_fetch_array(mysql_query("SELECT * FROM kustomer,orders 
@@ -408,10 +472,10 @@ echo "<tr><td colspan=5 align=right>Total              Rp. : </td><td align=righ
 	  $ongkoskirim1_rp = format_rupiah($ongkoskirim1); 
 	  $grandtotal_rp  = format_rupiah($grandtotal);    
 	
-	echo "<tr><td colspan=5 align=right>Total              Rp. : </td><td align=right><b>$total_rp</b></td></tr>    
-		  <tr><td colspan=5 align=right>Total Barang            : </td><td align=right><b>$totalbarang</b></td></tr>      
-		  <tr><td colspan=5 align=right>Total Berat            : </td><td align=right><b>$totalberat</b> Kg</td></tr>       
-		  <tr><td colspan=5 align=right>Grand Total        Rp. : </td><td align=right><b>$grandtotal_rp</b></td></tr>
+	echo "<tr><td colspan=5 align=right>Total              Rp. : </td><td align=left colspan=3><b>$total_rp</b></td></tr>    
+		  <tr><td colspan=5 align=right>Total Barang            : </td><td align=left colspan=3><b>$totalbarang</b></td></tr>      
+		  <tr><td colspan=5 align=right>Total Berat            : </td><td align=left colspan=3><b>$totalberat</b> Kg</td></tr>       
+		  <tr><td colspan=5 align=right>Grand Total        Rp. : </td><td align=left colspan=3><b>$grandtotal_rp</b></td></tr>
 		  </table>";
 	
 	  // tampilkan data kustomer
@@ -421,6 +485,24 @@ echo "<tr><td colspan=5 align=right>Total              Rp. : </td><td align=righ
 			<tr><td>No. Telpon/HP</td><td> : $r[telpon]</td></tr>
 			<tr><td>Email</td><td> : $r[email]</td></tr>
 			</table>";
+	 break;
+	 
+	 case "Return":
+	 	
+		$od=mysql_fetch_array(mysql_query("SELECT * FROM orders_detail WHERE id_orders_detail='$_GET[id]'"));
+			  
+		echo"<form method=POST action=$aksi?module=order&act=Return enctype='multipart/form-data'>
+          	<input type=hidden name=id value=$od[id_orders_detail]>
+			<h2>Return Barang</h2>
+			  <table>
+			  	<tr>
+					<td>Alasan Pengembalian </td> <td> <textarea name='keterangan' style='width: 600px; height: 350px;'>$od[keterangan]</textarea></td>
+				</tr>
+				<tr><td colspan=2><input type=submit value=Simpan>
+                            <input type=button value=Batal onclick=self.history.back()></td></tr>
+			  </table>
+		  </form>";	  	
+			  
 	 break;
 	 
 }

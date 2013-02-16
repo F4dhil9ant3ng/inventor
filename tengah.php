@@ -101,7 +101,7 @@ elseif ($_GET[module]=='detailproduk'){
         <div class='center_prod_box_big'>            
                  <div class='product_img_big'>
                  <a href='#'><img src='foto_produk/$r[gambar]' border='0' /></a>
-            <p align=center>(stok: $r[stok])</p>
+            <p align=center>(stok: $stok)</p>
             $tombol
             </div>
           <div class='details_big_box'>
@@ -976,162 +976,188 @@ echo "Anda belum memasukkan kode<br />
 
 // Modul simpan transaksi member
 elseif ($_GET[module]=='simpantransaksimember'){
-	  
-	  $nama_pelanggan 	= $_POST[nama_pelanggan];
-	  $alamat_pelanggan	= $_POST[alamat_pelanggan];
-	  $pic_pelanggan	= $_POST[pic_pelanggan];
-	  $no_hp_pelanggan	= $_POST[no_hp_pelanggan];
-	  $email_pelanggan	= $_POST[email_pelanggan];
-	  $use_for			= $_POST[use_for];
-	  
-	// fungsi untuk mendapatkan isi keranjang belanja
-	function isi_keranjang(){
-		$isikeranjang = array();
-		$sid = session_id();
-		$sql = mysql_query("SELECT * FROM orders_temp WHERE id_session='$sid'");
-		
-		while ($r=mysql_fetch_array($sql)) {
-			$isikeranjang[] = $r;
-		}
-		return $isikeranjang;
-	}
-  	
-	$tgl_skrg = date("Ymd");
-	$jam_skrg = date("H:i:s");
-
-	// simpan data pemesanan 
-	mysql_query("INSERT INTO orders(tgl_order,jam_order,nik,nama_pelanggan,alamat_pelanggan,pic_pelanggan,no_hp_pelanggan,email_pelanggan,use_for) 
-				VALUES('$tgl_skrg','$jam_skrg','".$_SESSION['nik']."','".$nama_pelanggan."','".$alamat_pelanggan."',
-				'".$pic_pelanggan."','".$no_hp_pelanggan."','".$email_pelanggan."','".$use_for."')");
-	
-	  
-	// mendapatkan nomor orders
-	$id_orders=mysql_insert_id();
-	// panggil fungsi isi_keranjang dan hitung jumlah produk yang dipesan
-	$isikeranjang = isi_keranjang();
-	$jml          = count($isikeranjang);
-
-	// simpan data detail pemesanan  
-	for ($i = 0; $i < $jml; $i++){
-	  mysql_query("INSERT INTO orders_detail(id_orders, id_produk, jumlah, nama_project) 
-				   VALUES('".$id_orders."','".$isikeranjang[$i][id_produk]."', '".$isikeranjang[$i][jumlah]."', '".$isikeranjang[$i][nama_project]."' )");
-	
-		
-		 // Update untuk mengurangi stok 
-      mysql_query("UPDATE produk SET produk.stok=produk.stok-'".$isikeranjang[$i]['jumlah']."' 
-	  WHERE produk.id_produk='".$isikeranjang[$i]['id_produk']."'");
-	}
-  
-	// setelah data pemesanan tersimpan, hapus data pemesanan di tabel pemesanan sementara (orders_temp)
-	for ($i = 0; $i < $jml; $i++) {
-	  mysql_query("DELETE FROM orders_temp
-					 WHERE id_orders_temp = {$isikeranjang[$i]['id_orders_temp']}");
-	}	
-	
-	echo "<script>alert('Submit order berhasil'); window.location = 'history-transaksi-member.html'</script>";  
-	 
-}else if($_GET[module]=='historitransaksimember'){
-	$id = mysql_fetch_array(mysql_query("SELECT * FROM kustomer WHERE nik='".$_SESSION['nik']."' AND password='".$_SESSION['password']."'"));	
-	// mendapatkan nomor kustomer
-
-  echo "<div class='center_title_bar'>Daftar Transaksi</div>";
-    	  echo "<div class='prod_box_big'>
-        	<div class='top_prod_box_big'></div>
-        <div class='center_prod_box_big'>            
-          <div class='details_big_cari'>
-              <div>
-      Data pemesan beserta ordernya adalah sebagai berikut: <br />
-      <table>
-	  <tr><td>NIK   </td><td> : <b>$id[nik]</b> </td></tr>
-      <tr><td>Nama Lengkap   </td><td> : <b>$id[nama_lengkap]</b> </td></tr>
-	  <tr><td>Divisi   </td><td> : <b>$id[divisi]</b> </td></tr>
-      <tr><td>Unit Kerja Lantai  </td><td> : $id[unit_kerja_lantai] </td></tr>
-      <tr><td>Nama Manajer </td><td> : $id[nama_manajer] </td></tr>	
-      <tr><td>Telpon         </td><td> : $id[telpon] </td></tr>
-      <tr><td>E-mail         </td><td> : $id[email] </td></tr></table><hr /><br />
-      
-      Nomor Order: <b>$id_orders</b><br /><br />";
-	  $p      = new Paging;
-      $batas  = 10;
-      $posisi = $p->cariPosisi($batas);
-	  $daftarorders=mysql_query("SELECT * FROM orders where nik='".$_SESSION['nik']."' order by id_orders DESC LIMIT $posisi,$batas");
-
-	$nomor=1;
-	echo "<table cellpadding=10>
-      <tr bgcolor=#6da6b1><th>No Order</th><th>Status Order</th><th>Id Wo</th><th>Tanggal Order</th><th>Tanggal Pengambilan</th><th>PIC Penerima</th><th>Aksi</th></tr>";
-      while($od=mysql_fetch_array($daftarorders)){
-	  		$tanggal=date("d-m-Y",strtotime($od[tgl_order]));
-			if($od[tgl_pengambilan]!=null){
-			 	$tanggalAmbil=date("d-m-Y",strtotime($od[tgl_pengambilan]));
+	if(!isset($_SESSION['nik']) && empty($_SESSION['nik'])){
+		  echo "<p><b>MA'AF ANDA BELUM LOGIN ! <BR>UNTUK MENGAKSES MODUL INI ANDA HARUS LOGIN TERLEBIH DAHULU</b></p>";
+	}else{  
+		  $nama_pelanggan 	= $_POST[nama_pelanggan];
+		  $alamat_pelanggan	= $_POST[alamat_pelanggan];
+		  $pic_pelanggan	= $_POST[pic_pelanggan];
+		  $no_hp_pelanggan	= $_POST[no_hp_pelanggan];
+		  $email_pelanggan	= $_POST[email_pelanggan];
+		  $use_for			= $_POST[use_for];
+		  
+		// fungsi untuk mendapatkan isi keranjang belanja
+		function isi_keranjang(){
+			$isikeranjang = array();
+			$sid = session_id();
+			$sql = mysql_query("SELECT * FROM orders_temp WHERE id_session='$sid'");
+			
+			while ($r=mysql_fetch_array($sql)) {
+				$isikeranjang[] = $r;
 			}
-	  		echo("	
-				<td>$od[id_orders]</td>			
-				<td>$od[status_order]</td>
-				<td>$od[id_wo]</td>
-				<td>$tanggal $od[jam_order]</td>
-				<td>$tanggalAmbil $od[jam_pengambilan]</td>	
-				<td>$od[pic_penerima]</td>			
-				<td colspan=2><a href=detail-$od[id_orders]-$od[status_order].html>detail</td></tr>");
-		$nomor++;		
-	  }
-	echo("</table>");	
-	//untuk paging  
-	$jmldata     = mysql_num_rows(mysql_query("SELECT * FROM orders where nik='".$_SESSION['nik']."'"));
-    $jmlhalaman  = $p->jumlahHalaman($jmldata, $batas);
-    $linkHalaman = $p->navHalaman($_GET[halproduk], $jmlhalaman);
-    echo "<div class='center_title_bar'>Halaman : $linkHalaman </div>";
-  
+			return $isikeranjang;
+		}
+		
+		$tgl_skrg = date("Ymd");
+		$jam_skrg = date("H:i:s");
 	
-	echo "<hr /><p>Klik detail untuk meliahat detail order anda. <br />  
+		// simpan data pemesanan 
+		mysql_query("INSERT INTO orders(tgl_order,jam_order,nik,nama_pelanggan,alamat_pelanggan,pic_pelanggan,no_hp_pelanggan,email_pelanggan,use_for) 
+					VALUES('$tgl_skrg','$jam_skrg','".$_SESSION['nik']."','".$nama_pelanggan."','".$alamat_pelanggan."',
+					'".$pic_pelanggan."','".$no_hp_pelanggan."','".$email_pelanggan."','".$use_for."')");
+		
+		  
+		// mendapatkan nomor orders
+		$id_orders=mysql_insert_id();
+		// panggil fungsi isi_keranjang dan hitung jumlah produk yang dipesan
+		$isikeranjang = isi_keranjang();
+		$jml          = count($isikeranjang);
+	
+		// simpan data detail pemesanan  
+		for ($i = 0; $i < $jml; $i++){
+		  mysql_query("INSERT INTO orders_detail(id_orders, id_produk, jumlah, nama_project) 
+					   VALUES('".$id_orders."','".$isikeranjang[$i][id_produk]."', '".$isikeranjang[$i][jumlah]."', '".$isikeranjang[$i][nama_project]."' )");
+		
+			
+			 // Update untuk mengurangi stok 
+		  mysql_query("UPDATE produk SET produk.stok=produk.stok-'".$isikeranjang[$i]['jumlah']."' 
+		  WHERE produk.id_produk='".$isikeranjang[$i]['id_produk']."'");
+		}
+	  
+		// setelah data pemesanan tersimpan, hapus data pemesanan di tabel pemesanan sementara (orders_temp)
+		for ($i = 0; $i < $jml; $i++) {
+		  mysql_query("DELETE FROM orders_temp
+						 WHERE id_orders_temp = {$isikeranjang[$i]['id_orders_temp']}");
+		}	
+		
+		echo "<script>alert('Submit order berhasil'); window.location = 'history-transaksi-member.html'</script>";  
+	 }
+}else if($_GET[module]=='historitransaksimember'){
+	if(!isset($_SESSION['nik']) && empty($_SESSION['nik'])){
+		  echo "<p><b>MA'AF ANDA BELUM LOGIN ! <BR>UNTUK MENGAKSES MODUL INI ANDA HARUS LOGIN TERLEBIH DAHULU</b></p>";
+	}else{
+		$id = mysql_fetch_array(mysql_query("SELECT * FROM kustomer WHERE nik='".$_SESSION['nik']."' AND password='".$_SESSION['password']."'"));	
+		// mendapatkan nomor kustomer
+	
+	  echo "<div class='center_title_bar'>Daftar Transaksi</div>";
+			  echo "<div class='prod_box_big'>
+				<div class='top_prod_box_big'></div>
+			<div class='center_prod_box_big'>            
+			  <div class='details_big_cari'>
+				  <div>
+		  Data pemesan beserta ordernya adalah sebagai berikut: <br />
+		  <table>
+		  <tr><td>NIK   </td><td> : <b>$id[nik]</b> </td></tr>
+		  <tr><td>Nama Lengkap   </td><td> : <b>$id[nama_lengkap]</b> </td></tr>
+		  <tr><td>Divisi   </td><td> : <b>$id[divisi]</b> </td></tr>
+		  <tr><td>Unit Kerja Lantai  </td><td> : $id[unit_kerja_lantai] </td></tr>
+		  <tr><td>Nama Manajer </td><td> : $id[nama_manajer] </td></tr>	
+		  <tr><td>Telpon         </td><td> : $id[telpon] </td></tr>
+		  <tr><td>E-mail         </td><td> : $id[email] </td></tr></table><hr /><br />
+		  
+		  Nomor Order: <b>$id_orders</b><br /><br />";
+		  $p      = new Paging;
+		  $batas  = 10;
+		  $posisi = $p->cariPosisi($batas);
+		  $daftarorders=mysql_query("SELECT * FROM orders where nik='".$_SESSION['nik']."' order by id_orders DESC LIMIT $posisi,$batas");
+	
+		$nomor=1;
+		echo "<table cellpadding=10>
+		  <tr bgcolor=#6da6b1><th>No Order</th><th>Status Order</th><th>Id Wo</th><th>Tanggal Order</th><th>Tanggal Pengambilan</th><th>PIC Penerima</th><th>Aksi</th></tr>";
+		  while($od=mysql_fetch_array($daftarorders)){
+				$tanggal=date("d-m-Y",strtotime($od[tgl_order]));
+				if($od[tgl_pengambilan]!=null){
+					$tanggalAmbil=date("d-m-Y",strtotime($od[tgl_pengambilan]));
+				}
+				echo("	
+					<td>$od[id_orders]</td>			
+					<td>$od[status_order]</td>
+					<td>$od[id_wo]</td>
+					<td>$tanggal $od[jam_order]</td>
+					<td>$tanggalAmbil $od[jam_pengambilan]</td>	
+					<td>$od[pic_penerima]</td>			
+					<td colspan=2><a href=detail-$od[id_orders]-$od[status_order].html>detail</td></tr>");
+			$nomor++;		
+		  }
+		echo("</table>");	
+		//untuk paging  
+		$jmldata     = mysql_num_rows(mysql_query("SELECT * FROM orders where nik='".$_SESSION['nik']."'"));
+		$jmlhalaman  = $p->jumlahHalaman($jmldata, $batas);
+		$linkHalaman = $p->navHalaman($_GET[halproduk], $jmlhalaman);
+		echo "<div class='center_title_bar'>Halaman : $linkHalaman </div>";
+	  
+		
+		echo "<hr /><p>Klik detail untuk meliahat detail order anda. <br />  
+					  </div>
+				  </div>    
+				  </div>
+					<div class='bottom_prod_box_big'></div>
+				  </div>";    
+	}			  
+}else if ($_GET[module]=='detailorder'){
+	if(!isset($_SESSION['nik']) && empty($_SESSION['nik'])){
+		  echo "<p><b>MA'AF ANDA BELUM LOGIN ! <BR>UNTUK MENGAKSES MODUL INI ANDA HARUS LOGIN TERLEBIH DAHULU</b></p>";
+	}else{
+		$daftarproduk=mysql_query("SELECT * FROM orders_detail,produk,orders 
+									 WHERE orders_detail.id_produk=produk.id_produk and orders.id_orders=orders_detail.id_orders
+									 AND orders_detail.id_orders='".$_GET[id]."'");
+									 
+		$odr = mysql_fetch_array(mysql_query("SELECT * FROM orders,orders_detail WHERE orders_detail.id_orders='".$_GET[id]."' 
+				AND orders_detail.id_orders=orders.id_orders"));
+		$tanggal=tgl_indo($odr[tgl_order]);
+	echo "<div class='prod_box_big'>
+			<div class='top_prod_box_big'></div>
+			<div class='center_prod_box_big'>            
+			  <div class='details_big_cari'>
+				<div>
+				  Detail ordernya adalah sebagai berikut: <br /><br>
+				  <table>
+				  <tr><td>No. Order   </td><td> : <b>$odr[id_orders]</b> </td></tr>
+				  <tr><td>Tgl. & Jam Order </td><td> : <b>$tanggal & $odr[jam_order]</b> </td></tr>
+				  <tr><td>PIC Yang Menyerahkan Barang </td><td> : <b>$odr[pic_penyerah_barang]</b> </td></tr>
+				  <tr><td>Id Wo </td><td> : $odr[id_wo] </td></tr>
+				  <tr><td>Bukti Serah Terima Barang </td><td> : <a href='../downlot.php?file=$odr[nama_file]'>$odr[nama_file]</a> </td></tr>	
+				  <tr><td>Tipe PIC  </td><td> : $odr[tipe_pic] </td></tr>
+				  <tr><td>PIC Penerima  </td><td> : $odr[fe_pic]   $odr[pic_penerima] </td></tr>
+				  <tr><td>Kode AWB  </td><td> : $odr[kode_awb] </td></tr>
+				  <tr><td>Bukti AWB  </td><td> : <a href='../downlot.php?file=$odr[file_awb]'>$odr[file_awb]</a> </td></tr></table><hr /><br />
+			  
+				  <table cellpadding=10>
+		  <tr bgcolor=#6da6b1><th>No</th><th>Nama Produk</th><th>Use For</th><th>Berat(Kg)</th><th>Qty</th><th>Harga Satuan</th><th>Sub Total</th></tr>";        
+	$no=1;
+	while ($d=mysql_fetch_array($daftarproduk)){
+	   $disc        = ($d[diskon]/100)*$d[harga];
+	   $hargadisc   = number_format(($d[harga]-$disc),0,",","."); 
+	   $subtotal    = ($d[harga]-$disc) * $d[jumlah];
+	   $qty			= $qty+ $d[jumlah];
+	
+	   $subtotalberat = $d[berat] * $d[jumlah]; // total berat per item produk 
+	   $totalberat  = $totalberat + $subtotalberat; // grand total berat all produk yang dibeli
+	
+	   $total       = $total + $subtotal;
+	   $subtotal_rp = format_rupiah($subtotal);    
+	   $total_rp    = format_rupiah($total);    
+	   $harga       = format_rupiah($d[harga]);
+		
+	   echo "<tr bgcolor=#dad0d0><td>$no</td><td>$d[merk]</td><td>$d[use_for]</td><td align=center>$d[berat]</td><td align=center>$d[jumlah]</td>
+								 <td align=right>$harga</td><td align=right>$subtotal_rp</td></tr>";
+	
+	   $pesan.="$d[jumlah] $d[nama_produk] -> Rp. $harga -> Subtotal: Rp. $subtotal_rp <br />";
+	   $no++;
+	}
+		
+	echo "<tr><td colspan=6 align=right>Total : Rp. </td><td align=right><b>$total_rp</b></td></tr>
+			<tr><td colspan=6 align=right>Total Quantity : </td><td align=right><b>$qty</b></td></tr> 
+		   <tr><td colspan=6 align=right>Total Berat : </td><td align=right><b>$totalberat Kg</b></td></tr>    
+		  </table>";
+	echo "<hr /><p>Data order anda terlampir seperti rincian diatas. <br />
+				   Apabila Anda yakin akan mengorder rincian ini, silahkan klik button Submit Order. <a href='history-transaksi-member.html' >Kembali</a><br />      
 				  </div>
 			  </div>    
 			  </div>
 				<div class='bottom_prod_box_big'></div>
-			  </div>";    
-}else if ($_GET[module]=='detailorder'){
-	$daftarproduk=mysql_query("SELECT * FROM orders_detail,produk,orders 
-                                 WHERE orders_detail.id_produk=produk.id_produk and orders.id_orders=orders_detail.id_orders
-                                 AND orders_detail.id_orders='".$_GET[id]."'");
-
-echo "<div class='prod_box_big'>
-        	<div class='top_prod_box_big'></div>
-        <div class='center_prod_box_big'>            
-          <div class='details_big_cari'>
-              <div><table cellpadding=10>
-      <tr bgcolor=#6da6b1><th>No</th><th>Nama Produk</th><th>Use For</th><th>Berat(Kg)</th><th>Qty</th><th>Harga Satuan</th><th>Sub Total</th></tr>";        
-$no=1;
-while ($d=mysql_fetch_array($daftarproduk)){
-   $disc        = ($d[diskon]/100)*$d[harga];
-   $hargadisc   = number_format(($d[harga]-$disc),0,",","."); 
-   $subtotal    = ($d[harga]-$disc) * $d[jumlah];
-   $qty			= $qty+ $d[jumlah];
-
-   $subtotalberat = $d[berat] * $d[jumlah]; // total berat per item produk 
-   $totalberat  = $totalberat + $subtotalberat; // grand total berat all produk yang dibeli
-
-   $total       = $total + $subtotal;
-   $subtotal_rp = format_rupiah($subtotal);    
-   $total_rp    = format_rupiah($total);    
-   $harga       = format_rupiah($d[harga]);
-	
-   echo "<tr bgcolor=#dad0d0><td>$no</td><td>$d[merk]</td><td>$d[use_for]</td><td align=center>$d[berat]</td><td align=center>$d[jumlah]</td>
-                             <td align=right>$harga</td><td align=right>$subtotal_rp</td></tr>";
-
-   $pesan.="$d[jumlah] $d[nama_produk] -> Rp. $harga -> Subtotal: Rp. $subtotal_rp <br />";
-   $no++;
-}
-	
-echo "<tr><td colspan=6 align=right>Total : Rp. </td><td align=right><b>$total_rp</b></td></tr>
-		<tr><td colspan=6 align=right>Total Quantity : </td><td align=right><b>$qty</b></td></tr> 
-	   <tr><td colspan=6 align=right>Total Berat : </td><td align=right><b>$totalberat Kg</b></td></tr>    
-      </table>";
-echo "<hr /><p>Data order anda terlampir seperti rincian diatas. <br />
-               Apabila Anda yakin akan mengorder rincian ini, silahkan klik button Submit Order. <a href='history-transaksi-member.html' >Kembali</a><br />      
-              </div>
-          </div>    
-          </div>
-            <div class='bottom_prod_box_big'></div>
-          </div>"; 
+			  </div>"; 
+	}		  
 }else if($_GET[module]=='ceklogin'){
 	$nik = $_POST['nik'];
 	$password = md5($_POST['password']);	

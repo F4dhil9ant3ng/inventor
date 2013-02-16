@@ -10,7 +10,7 @@
 		if(isset($_SESSION['nik']) && !empty($_SESSION['nik'])){
 	?>
 	 <div class="title_box">Selamat datang </div>
-	 	<div class="border_box"><marquee onmouseover="this.stop()" onmouseout="this.start()" scrollamount="2" direction="left" align="center">
+	 	<div class="border_box"><marquee onmouseover="this.stop()" onmouseout="this.start()" scrollamount="1" loop=true direction="left" align="center">
 		
 		Anda Login Sebagai : <?php echo $_SESSION['nama_lengkap'];?></marquee>
 			<a href='history-transaksi-member.html'><h3>History Order</h3></a>
@@ -100,14 +100,38 @@
 
 
 	 <!--</div> -->	     
+	 
+	 <div class="title_box">Tracking Pengiriman</div>  
+     <div class="border_box">
+	 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+                  <tr>
+                    <td><div align="center">
+					<form method="post" action="http://www.jne.co.id/index.php?mib=tracking&lang=IN" target="_blank">
+					 <span class='pengunjung'>Nomor Resi JNE <br />
+					<input name="awbnum" type="text" class="rightsearch" id="awbnum"  /></br>
+					<input type="submit" name="submittracking" class="btlogin" value="Track" id="trksubmit" />
+					</form>  </br></br>
+					<form method="get" action="http://www.posindonesia.co.id/home/modules/mod_search/tmpl/libs/lacakk1121m4np05.php" name="input" target="_blank">
+					<input type="hidden" name="lacak" value="Lacak" />
+					No Resi POS <br/>
+					<input name="barcode" type="text" /></br>
+					<input type="submit" value="Track"  />
+					</form>
+                   </span></div> </center>
+				   </td>
+                  </tr>
+            </table> 
+	 </div>
      
      <div class="banner_adds">
 
-<?php
-$banner=mysql_query("SELECT * FROM banner ORDER BY id_banner DESC LIMIT 4");
-while($b=mysql_fetch_array($banner)){
-  echo "<p align='center'><a href='$b[url]'' target='_blank' title='$b[judul]'><img src='foto_banner/$b[gambar]' border=0></a></p>";
-}
-
-?>
-     </div>        
+		<?php
+		$banner=mysql_query("SELECT * FROM banner ORDER BY id_banner DESC LIMIT 4");
+		while($b=mysql_fetch_array($banner)){
+		  echo "<p align='center'><a href='$b[url]'' target='_blank' title='$b[judul]'><img src='foto_banner/$b[gambar]' border=0></a></p>";
+		}
+		
+		?>
+     </div>      
+	 
+	   

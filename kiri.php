@@ -118,6 +118,8 @@ background: #CC9900;
 		   
     <div class="title_box">Perangkat Fast Moving</div>  
      <div class="border_box">
+	  <MARQUEE onmouseover=this.stop() style="CURSOR:default" 
+                       onmouseout=this.start() scrollAmount=1 direction=up loop=true height=500>
       <?php
       $best=mysql_query("SELECT * FROM produk ORDER BY dibeli DESC LIMIT 5");
       while($a=mysql_fetch_array($best)){
@@ -131,6 +133,7 @@ background: #CC9900;
       }
 
         ?>
+		</MARQUEE>
        </div>
 
      <div class="banner_adds"></div>    

@@ -24,7 +24,7 @@ else{
 while ($m=mysql_fetch_array($sql)){  
   if($m[id_modul]==18){
   		echo('
-		<li><a href="#">&#187;'.$m[nama_modul].'</a></a><ul>');
+		<li><a href="#">&#187;'.$m[nama_modul].'</a><ul>');
 		  $sql2=mysql_query("select * from kategori");
 		  while ($m2=mysql_fetch_array($sql2)){
 		  		echo('<li><a href=?module=produk&id='.$m2[id_kategori].'>&#187;'.$m2[nama_kategori].'</a>
@@ -38,7 +38,17 @@ while ($m=mysql_fetch_array($sql)){
 		   echo('</li>
 		  </ul>
 		</li> '); 	
-  }	else{  	
+  }	else if($m[id_modul]==52){
+  		echo('
+		<li><a href='.$m[link].'>&#187;'.$m[nama_modul].'</a><ul>');
+  
+  		echo('
+				<li><a href=?module=laporanstokbarang>&#187; Laporan Stok Total Barang</a></a></li>
+				<li><a href=?module=laporanbarangmasuk>&#187; Laporan barang Masuk</a></a></li>
+				<li><a href=?module=laporanbarangkeluar>&#187; Laporan barang Keluar</a></a></li>
+				<li><a href=?module=laporanbarangreturn>&#187; Laporan barang Return</a></a></li>
+			 </ul></li>');
+  }else{  	
   		echo '<li><a href='.$m[link].'>&#187;'.$m[nama_modul].'</a></li>'; 
   }
 }

@@ -25,8 +25,8 @@ $pdf->setStrokeColor(0, 0, 0, 1);
 $pdf->addJpegFromFile('logo.jpg',20,800,69);
 
 // Teks di tengah atas untuk judul header
-$pdf->addText(180, 820, 16,'<b>Laporan Penjualan Harian</b>');
-$pdf->addText(200, 800, 14,'<b>Toko Handphone Lokomedia</b>');
+$pdf->addText(220, 820, 16,'<b>Laporan Stok Barang</b>');
+$pdf->addText(200, 800, 14,'<b>Data Warehouse Online System Indosat</b>');
 // Garis atas untuk header
 $pdf->line(10, 795, 578, 795);
 

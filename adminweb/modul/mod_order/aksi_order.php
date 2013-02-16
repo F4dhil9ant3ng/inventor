@@ -72,12 +72,35 @@ else{
 		  }else{
 		  		UploadFile($nama_file);
 				UploadFile($nama_file_awb);
+				$tipe_pic=$_POST[tipe_pic];
+				$fe_pic=$_POST[fe_pic];
+				$nama_pic_tipe=$_POST[name_pic_fe];
+								
 		  		if ($_POST[status_order]=='Pengambilan'){ 
 				// Update status order
-					 mysql_query("UPDATE orders SET tgl_pengambilan='".$tgl_skrg."',jam_pengambilan='".$jam_skrg."', pic_penerima='".$_POST[penerima]."',
+					if($tipe_pic=='Fe'){
+						 mysql_query("UPDATE orders SET tgl_pengambilan='".$tgl_skrg."',jam_pengambilan='".$jam_skrg."', pic_penerima='".$_POST[name_pic_fe]."',
+							pic_penyerah_barang='".$_POST[penyerah_barang]."', status_order='".$_POST[status_order]."',nama_file='$nama_file', 
+							id_wo='".$_POST[id_wo]."',tipe_pic='".$tipe_pic."',fe_pic='".$fe_pic."' where id_orders='".$_POST[id]."'");
+							header('location:../../media.php?module='.$module);	
+					}else{
+						 mysql_query("UPDATE orders SET tgl_pengambilan='".$tgl_skrg."',jam_pengambilan='".$jam_skrg."',
 							pic_penyerah_barang='".$_POST[penyerah_barang]."', status_order='".$_POST[status_order]."',nama_file='$nama_file', 
 							id_wo='".$_POST[id_wo]."',kode_awb='".$_POST[kode_awb]."',file_awb='$nama_file_awb' where id_orders='".$_POST[id]."'");
 							header('location:../../media.php?module='.$module);	
+					}
+				}else if($_POST[status_order]=='Sudah Diambil'){
+					if($tipe_pic=='Fe'){
+						 mysql_query("UPDATE orders SET tgl_pengambilan='".$tgl_skrg."',jam_pengambilan='".$jam_skrg."', pic_penerima='".$_POST[name_pic_fe]."',
+							pic_penyerah_barang='".$_POST[penyerah_barang]."', nama_file='$nama_file', 
+							id_wo='".$_POST[id_wo]."',tipe_pic='".$tipe_pic."',fe_pic='".$fe_pic."' where id_orders='".$_POST[id]."'");
+							header('location:../../media.php?module='.$module);	
+					}else{
+						 mysql_query("UPDATE orders SET tgl_pengambilan='".$tgl_skrg."',jam_pengambilan='".$jam_skrg."',
+							pic_penyerah_barang='".$_POST[penyerah_barang]."',nama_file='$nama_file', 
+							id_wo='".$_POST[id_wo]."',kode_awb='".$_POST[kode_awb]."',file_awb='$nama_file_awb' where id_orders='".$_POST[id]."'");
+							header('location:../../media.php?module='.$module);	
+					}
 				}else{
 				// Update untuk menambah stok
 				mysql_query("UPDATE produk,orders_detail SET produk.stok=produk.stok+orders_detail.jumlah WHERE produk.id_produk=orders_detail.id_produk and orders_detail.id_orders='$_POST[id]'"); 
@@ -88,9 +111,17 @@ else{
 				// Update status order Batal
 			mysql_query("UPDATE orders SET status_order='".$_POST[status_order]."',tgl_pembatalan='".$tgl_skrg."',jam_pembatalan='".$jam_skrg."' where id_orders='$_POST[id]'");
 			header('location:../../media.php?module='.$module);
-			}
-				
+			}				
 		 }	
-	}
+	}else if ($module=='order' AND $act=='Return'){
+		$tgl_skrg = date("Ymd");
+		$jam_skrg = date("H:i:s");
+		$module=$_GET[module];
+	    $act=$_GET[act];
+		
+		mysql_query("UPDATE orders_detail SET status='Return',tgl_return_barang='".$tgl_skrg."'
+		,jam_return_barang='".$jam_skrg."',keterangan='".$_POST[keterangan]."' where id_orders='$_POST[id]'");
+		header('location:../../media.php?module='.$module);
+	}	
 }
 ?>

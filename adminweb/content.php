@@ -99,6 +99,34 @@ elseif ($_GET[module]=='laporan'){
  // }
 }
 
+// Bagian sub Laporan total barang
+elseif ($_GET[module]=='laporanstokbarang'){
+  //if ($_SESSION['leveluser']=='admin'){
+    include "modul/mod_laporan/laporan.php";
+ // }
+}
+
+// Bagian sub Laporan barang masuk
+elseif ($_GET[module]=='laporanbarangmasuk'){
+  //if ($_SESSION['leveluser']=='admin'){
+    include "modul/mod_laporan/laporanbarangmasuk.php";
+ // }
+}
+
+// Bagian sub Laporan barang keluar
+elseif ($_GET[module]=='laporanbarangkeluar'){
+  //if ($_SESSION['leveluser']=='admin'){
+    include "modul/mod_laporan/laporanbarangkeluar.php";
+ // }
+}
+
+// Bagian sub Laporan barang keluar
+elseif ($_GET[module]=='laporanbarangreturn'){
+  //if ($_SESSION['leveluser']=='admin'){
+    include "modul/mod_laporan/laporanbarangreturn.php";
+ // }
+}
+
 // Bagian YM
 elseif ($_GET[module]=='ym'){
   //if ($_SESSION['leveluser']=='admin'){

@@ -52,6 +52,7 @@ elseif ($module=='produk' AND $act=='input'){
   $harga 			=$_POST[harga];
   $stok 			=$_POST[stok];
   $no_po			=$_POST[no_po];
+  $buffer			=$_POST[buffer];
   $spesification 	=$_POST[spesification];
 
   // Apabila ada gambar yang diupload
@@ -75,6 +76,7 @@ elseif ($module=='produk' AND $act=='input'){
 									berat,
                                     harga,
                                     stok,
+									buffer,
 									spesification,
                                     gambar) 
                             VALUES('$merk',
@@ -89,6 +91,7 @@ elseif ($module=='produk' AND $act=='input'){
 								   '$berat',                                 
                                    '$harga',
                                    '$stok',
+								   '$buffer',
 								   '$spesification',
                                    '$nama_file_unik')");
   header('location:../../media.php?module='.$module.'&idsub='.$_POST[kategori]);
@@ -107,6 +110,7 @@ elseif ($module=='produk' AND $act=='input'){
 									berat,
                                     harga,
                                     stok,
+									buffer,
 									spesification) 
                             VALUES('$merk',
 								   '$mode',
@@ -120,6 +124,7 @@ elseif ($module=='produk' AND $act=='input'){
                                    '$berat',
 								   '$harga',                                 
                                    '$stok',
+								   '$buffer',
 								   '$spesification')");
     /* echo('merk : '. $merk);
 	 echo('<br>model : '.$model);
@@ -151,6 +156,7 @@ elseif ($module=='produk' AND $act=='update'){
   $berat 			=$_POST[berat];
   $harga 			=$_POST[harga];
   $stok 			=$_POST[stok];
+  $buffer 			=$_POST[buffer];
   $spesification 	=$_POST[spesification];
 
   // Apabila gambar tidak diganti
@@ -167,6 +173,7 @@ elseif ($module=='produk' AND $act=='update'){
 								   berat	   	= '$berat',
                                    harga 		= '$harga',
 								   stok	   		=  '$stok',
+								   buffer       = '$buffer',
 								   spesification= '$spesification'
                              WHERE id_produk   	= '$_POST[id]'");
   header('location:../../media.php?module='.$module.'&idsub='.$_POST[kategori]);
@@ -190,6 +197,7 @@ elseif ($module=='produk' AND $act=='update'){
 								   berat	   	= '$berat',
                                    harga 		= '$harga',
 								   stok	   		=  '$stok',
+								   buffer       = '$buffer',
 								   spesification= '$spesification'
                                    gambar      = '$nama_file_unik'   
                              WHERE id_produk   = '$_POST[id]'");
