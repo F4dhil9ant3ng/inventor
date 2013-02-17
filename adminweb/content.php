@@ -102,7 +102,7 @@ elseif ($_GET[module]=='laporan'){
 // Bagian sub Laporan total barang
 elseif ($_GET[module]=='laporanstokbarang'){
   //if ($_SESSION['leveluser']=='admin'){
-    include "modul/mod_laporan/laporan.php";
+    include "modul/mod_laporan/laporanstoktotalbarang.php";
  // }
 }
 

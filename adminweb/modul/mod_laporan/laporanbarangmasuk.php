@@ -6,11 +6,9 @@ session_start();
   echo "<a href=../../index.php><b>LOGIN</b></a></center>";
 }
 else{
-   echo "<h2>Laporan</h2>
-          <input type=button value='Laporan Hari Ini' 
-          onclick=\"window.location.href='modul/mod_laporan/pdf_toko_sekarang.php';\">
+   echo "<h2>Laporan Barang Masuk</h2>
 
-          <form method=POST action='modul/mod_laporan/pdf_toko.php'>
+          <form method=POST action='modul/mod_laporan/pdf_barang_masuk.php'>
           <table>
           <tr><td colspan=2><b>Laporan Per Periode</b></td></tr>
           <tr><td>Dari Tanggal</td><td> : ";        
