@@ -25,7 +25,7 @@ switch($_GET[act]){
 		     <td><a href=mailto:$r[email]>$r[email]</a></td>
 		     <td>$r[telpon]</td>
 		     <td align=center>$r[divisi]</td>
-			 <td>$r[unit_kerja]</td>
+			 <td>$r[unit_kerja_lantai]</td>
 			 <td>$r[lokasi_kerja]</td>
              <td><a href=?module=user&act=edituser&id=$r[nik]>Edit</a>
 			 	| <a href=$aksi?module=user&act=hapususer&id=$r[nik]>Hapus</a>
@@ -44,9 +44,9 @@ switch($_GET[act]){
           <tr><td>Password</td>     <td> : <input type=text name='password'></td></tr>
           <tr><td>Nama Lengkap</td> <td> : <input type=text name='nama_lengkap' size=30></td></tr>
 		  <tr><td>Divisi</td> <td> : <input type=text name='divisi' size=30></td></tr>  
-		  <tr><td>Unit Kerja</td> <td> : <input type=text name='unit_kerja' size=30></td></tr>
+		  <tr><td>Unit Kerja</td> <td> : <input type=text name='unit_kerja_lantai' size=30></td></tr>
 		  <tr><td>Lokasi Kerja</td> <td> : <input type=text name='lokasi_kerja' size=30></td></tr>
-		  <tr><td>No.Telp/HP</td>   <td> : <input type=text name='no_telp' size=20></td></tr>
+		  <tr><td>No.Telp/HP</td>   <td> : <input type=text name='telpon' size=20></td></tr>
           <tr><td>E-mail</td>       <td> : <input type=text name='email' size=30></td></tr> 
 		  <tr><td>Nama Manajer</td>       <td> : <input type=text name='nama_manajer' size=30></td></tr>         
           <tr><td colspan=2><input type=submit value=Simpan>
@@ -66,23 +66,13 @@ switch($_GET[act]){
           <tr><td>Password</td>     <td> : <input type=text name='password'> *)></td></tr>
           <tr><td>Nama Lengkap</td> <td> : <input type=text name='nama_lengkap' size=30  value='$r[nama_lengkap]'></td></tr>
 		  <tr><td>Divisi</td> <td> : <input type=text name='divisi' value='$r[divisi]' size=30></td></tr>  
-		  <tr><td>Unit Kerja</td> <td> : <input type=text name='unit_kerja' size=30  value='$r[unit_kerja]' size=30></td></tr>
+		  <tr><td>Unit Kerja</td> <td> : <input type=text name='unit_kerja_lantai' size=30  value='$r[unit_kerja_lantai]' size=30></td></tr>
 		  <tr><td>Lokasi Kerja</td> <td> : <input type=text name='lokasi_kerja' size=30  value='$r[lokasi_kerja]' size=30></td></tr>
-		  <tr><td>No.Telp/HP</td>   <td> : <input type=text name='telpon' value='$r[telepon]' size=20></td></tr>
+		  <tr><td>No.Telp/HP</td>   <td> : <input type=text name='telpon' value='$r[telpon]' size=20></td></tr>
           <tr><td>E-mail</td>       <td> : <input type=text name='email' value='$r[email]' size=30></td></tr> 
 		  <tr><td>Nama Manajer</td> <td> : <input type=text name='nama_manajer' value='$r[nama_manajer]'size=30></td></tr>         
           <tr><td colspan=2><input type=submit value=Simpan>
-                            <input type=button value=Batal onclick=self.history.back()></td></tr>";
-
-    if ($r[blokir]=='N'){
-      echo "<tr><td>Blokir</td>     <td> : <input type=radio name='blokir' value='Y'> Y   
-                                           <input type=radio name='blokir' value='N' checked> N </td></tr>";
-    }
-    else{
-      echo "<tr><td>Blokir</td>     <td> : <input type=radio name='blokir' value='Y' checked> Y  
-                                          <input type=radio name='blokir' value='N'> N </td></tr>";
-    }
-    
+                            <input type=button value=Batal onclick=self.history.back()></td></tr>";    
     echo "<tr><td colspan=2>*) Apabila password tidak diubah, dikosongkan saja.<br />
                             **) Username tidak bisa diubah.</td></tr>
           <tr><td colspan=2><input type=submit value=Update>

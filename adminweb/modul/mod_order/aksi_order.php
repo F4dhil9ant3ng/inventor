@@ -120,7 +120,7 @@ else{
 	    $act=$_GET[act];
 		
 		mysql_query("UPDATE orders_detail SET status='Return',tgl_return_barang='".$tgl_skrg."'
-		,jam_return_barang='".$jam_skrg."',keterangan='".$_POST[keterangan]."' where id_orders='$_POST[id]'");
+		,jam_return_barang='".$jam_skrg."',keterangan='".$_POST[keterangan]."',kondisi='".$_POST[kondisi]."' where id_orders_detail='$_POST[id]' ");
 		header('location:../../media.php?module='.$module);
 	}	
 }

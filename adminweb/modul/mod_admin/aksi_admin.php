@@ -38,7 +38,7 @@ elseif ($module=='admin' AND $act=='update'){
                                   email          = '$_POST[email]',
                                   blokir         = '$_POST[blokir]',  
                                   no_telp        = '$_POST[no_telp]',
-								  level          = '$_POST[level]',  
+								  level          = '$_POST[level]'  
                            WHERE  id_session     = '$_POST[id]'");
   }
   // Apabila password diubah
@@ -49,7 +49,7 @@ elseif ($module=='admin' AND $act=='update'){
                                  email           = '$_POST[email]',  
                                  blokir          = '$_POST[blokir]',  
                                  no_telp         = '$_POST[no_telp]',
-								 level 			 = '$_POST[level]',	  
+								 level 			 = '$_POST[level]'  
                            WHERE id_session      = '$_POST[id]'");
   }
   header('location:../../media.php?module='.$module);

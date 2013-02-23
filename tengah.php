@@ -83,8 +83,6 @@ if ($_GET[module]=='home'){
   }
 }
 
-
-
 // Modul detail produk
 elseif ($_GET[module]=='detailproduk'){
   // Tampilkan detail produk berdasarkan produk yang dipilih
@@ -100,7 +98,7 @@ elseif ($_GET[module]=='detailproduk'){
         	<div class='top_prod_box_big'></div>
         <div class='center_prod_box_big'>            
                  <div class='product_img_big'>
-                 <a href='#'><img src='foto_produk/$r[gambar]' border='0' /></a>
+                 <a href='foto_produk/$r[gambar]' title='$r[merk]' class='lightbox'><img src='foto_produk/$r[gambar]' border='0' height='110'/></a>
             <p align=center>(stok: $stok)</p>
             $tombol
             </div>
@@ -153,14 +151,15 @@ elseif ($_GET[module]=='detailkategori'){
 
   // Tentukan berapa data yang akan ditampilkan per halaman (paging)
   $p      = new Paging3;
-  $batas  = 2;
+  $batas  = 12;
   $posisi = $p->cariPosisi($batas);
   
   //get sub kategori berdasarkan kategori
   
   // Tampilkan daftar produk yang sesuai dengan kategori yang dipilih
-  $sql = mysql_query("select sk.nama_sub_kategori,k.nama_kategori,p.id_produk,p.gambar from kategori k,(sub_kategori sk LEFT JOIN produk p 
-					 on sk.id_sub_kategori=p.id_kategori) where sk.id_kategori='".$_GET[id]."' and sk.id_kategori=k.id_kategori ORDER BY id_produk DESC LIMIT $posisi,$batas");		 
+  $sql = mysql_query("select sk.nama_sub_kategori,k.nama_kategori,p.id_produk,p.gambar 
+					 from kategori k,sub_kategori sk,  produk p  
+					 where sk.id_kategori='".$_GET[id]."' and sk.id_kategori=k.id_kategori AND sk.id_sub_kategori=p.id_kategori ORDER BY id_produk DESC LIMIT $posisi,$batas");		 
   $jumlah = mysql_num_rows($sql);
 
 	// Apabila ditemukan produk dalam kategori
@@ -190,8 +189,9 @@ elseif ($_GET[module]=='detailkategori'){
           </div> 
           </div>";
   } 
-  $jmldata     = mysql_num_rows(mysql_query("select sk.nama_sub_kategori,k.nama_kategori,p.id_produk from kategori k,(sub_kategori sk LEFT JOIN produk p 
-					 on sk.id_sub_kategori=p.id_kategori) where sk.id_kategori='".$_GET[id]."' and sk.id_kategori=k.id_kategori"));
+  $jmldata     = mysql_num_rows(mysql_query("select sk.nama_sub_kategori,k.nama_kategori,p.id_produk,p.gambar 
+					 from kategori k,sub_kategori sk,  produk p  
+					 where sk.id_kategori='".$_GET[id]."' and sk.id_kategori=k.id_kategori AND sk.id_sub_kategori=p.id_kategori"));
   $jmlhalaman  = $p->jumlahHalaman($jmldata, $batas);
   $linkHalaman = $p->navHalaman($_GET[halkategori], $jmlhalaman);
 
@@ -1063,7 +1063,7 @@ elseif ($_GET[module]=='simpantransaksimember'){
 	
 		$nomor=1;
 		echo "<table cellpadding=10>
-		  <tr bgcolor=#6da6b1><th>No Order</th><th>Status Order</th><th>Id Wo</th><th>Tanggal Order</th><th>Tanggal Pengambilan</th><th>PIC Penerima</th><th>Aksi</th></tr>";
+		  <tr bgcolor=#6da6b1><th>No Order</th><th>Status Order</th><th>Id Wo</th><th>Tgl Order</th><th>Tgl Pengambilan</th><th>PIC Penerima</th><th width=50>Aksi</th></tr>";
 		  while($od=mysql_fetch_array($daftarorders)){
 				$tanggal=date("d-m-Y",strtotime($od[tgl_order]));
 				if($od[tgl_pengambilan]!=null){
@@ -1076,7 +1076,7 @@ elseif ($_GET[module]=='simpantransaksimember'){
 					<td>$tanggal $od[jam_order]</td>
 					<td>$tanggalAmbil $od[jam_pengambilan]</td>	
 					<td>$od[pic_penerima]</td>			
-					<td colspan=2><a href=detail-$od[id_orders]-$od[status_order].html>detail</td></tr>");
+					<td colspan=2><a href=detail-$od[id_orders]-$od[status_order].html>detail</a> | <a href=edit-$od[id_orders]-$od[status_order].html>Edit</a></td></tr>");
 			$nomor++;		
 		  }
 		echo("</table>");	
@@ -1084,7 +1084,7 @@ elseif ($_GET[module]=='simpantransaksimember'){
 		$jmldata     = mysql_num_rows(mysql_query("SELECT * FROM orders where nik='".$_SESSION['nik']."'"));
 		$jmlhalaman  = $p->jumlahHalaman($jmldata, $batas);
 		$linkHalaman = $p->navHalaman($_GET[halproduk], $jmlhalaman);
-		echo "<div class='center_title_bar'>Halaman : $linkHalaman </div>";
+		echo "<div >Halaman : $linkHalaman </div>";
 	  
 		
 		echo "<hr /><p>Klik detail untuk meliahat detail order anda. <br />  
@@ -1158,6 +1158,123 @@ elseif ($_GET[module]=='simpantransaksimember'){
 				<div class='bottom_prod_box_big'></div>
 			  </div>"; 
 	}		  
+}else if ($_GET[module]=='editorder'){
+	if(!isset($_SESSION['nik']) && empty($_SESSION['nik'])){
+		  echo "<p><b>MA'AF ANDA BELUM LOGIN ! <BR>UNTUK MENGAKSES MODUL INI ANDA HARUS LOGIN TERLEBIH DAHULU</b></p>";
+	}else{
+		$daftarproduk=mysql_query("SELECT * FROM orders_detail,produk,orders 
+									 WHERE orders_detail.id_produk=produk.id_produk and orders.id_orders=orders_detail.id_orders
+									 AND orders_detail.id_orders='".$_GET[id]."'");
+									 
+		$odr = mysql_fetch_array(mysql_query("SELECT * FROM orders,orders_detail WHERE orders_detail.id_orders='".$_GET[id]."' 
+				AND orders_detail.id_orders=orders.id_orders"));
+		$tanggal=tgl_indo($odr[tgl_order]);
+	echo "<div class='prod_box_big'>
+			<div class='top_prod_box_big'></div>
+			<div class='center_prod_box_big'>            
+			  <div class='details_big_cari'>
+				<div>
+				  Edit Detail order : <br /><br>
+				  <form method=post action=edit-transaksi-member.html>
+				   <input type=hidden name=id value='$odr[id_orders]'>
+				  <table>
+					  <tr>
+						<td>No. Order   </td><td> : </td><td><b>$odr[id_orders]</b> </td>
+					  </tr>
+					  <tr>
+						<td>Tgl. & Jam Order </td><td> :</td> <td><b>$tanggal & $odr[jam_order]</b> </td>
+					  </tr>
+					  <tr>
+						<td>Pelanggan</td>
+						<td>:</td>
+						<td><input type=text name='nama_pelanggan' size=40 value='".$odr[nama_pelanggan]."'></td>
+					</tr>
+					<tr>
+						<td>Alamat Pelanggan</td>
+						<td>:</td>
+						<td><textarea name='alamat_pelanggan' rows=5 cols=40>$odr[alamat_pelanggan]</textarea></td>
+					</tr>
+					<tr>
+						<td>PIC Pelanggan</td>
+						<td>:</td>
+						<td><input type=text name='pic_pelanggan' size=40 value='".$odr[pic_pelanggan]."'></td>
+					</tr>
+					<tr>
+						<td>No Hp</td>
+						<td>:</td>
+						<td><input type=text name='no_hp_pelanggan' size=40 value='".$odr[no_hp_pelanggan]."'></td>
+					</tr>
+					<tr>
+						<td>Email</td>
+						<td>:</td>
+						<td><input type=text name='email_pelanggan' size=40 value='".$odr[email_pelanggan]."'></td>
+					</tr>
+					
+					<tr>
+						<td colspan=4 align=right>
+							<br /><input type=submit name=submit value='Simpan' class='button'><br />
+						</td>
+					</tr>
+			</table>
+			</form>
+			<hr /><br />
+			  
+		<table cellpadding=10>
+		  <tr bgcolor=#6da6b1><th>No</th><th>Nama Produk</th><th>Use For</th><th>Berat(Kg)</th><th>Qty</th><th>Harga Satuan</th><th>Sub Total</th></tr>";        
+	$no=1;
+	while ($d=mysql_fetch_array($daftarproduk)){
+	   $disc        = ($d[diskon]/100)*$d[harga];
+	   $hargadisc   = number_format(($d[harga]-$disc),0,",","."); 
+	   $subtotal    = ($d[harga]-$disc) * $d[jumlah];
+	   $qty			= $qty+ $d[jumlah];
+	
+	   $subtotalberat = $d[berat] * $d[jumlah]; // total berat per item produk 
+	   $totalberat  = $totalberat + $subtotalberat; // grand total berat all produk yang dibeli
+	
+	   $total       = $total + $subtotal;
+	   $subtotal_rp = format_rupiah($subtotal);    
+	   $total_rp    = format_rupiah($total);    
+	   $harga       = format_rupiah($d[harga]);
+		
+	   echo "<tr bgcolor=#dad0d0><td>$no</td><td>$d[merk]</td><td>$d[use_for]</td><td align=center>$d[berat]</td><td align=center>$d[jumlah]</td>
+								 <td align=right>$harga</td><td align=right>$subtotal_rp</td></tr>";
+	
+	   $pesan.="$d[jumlah] $d[nama_produk] -> Rp. $harga -> Subtotal: Rp. $subtotal_rp <br />";
+	   $no++;
+	}
+		
+	echo "<tr><td colspan=6 align=right>Total : Rp. </td><td align=right><b>$total_rp</b></td></tr>
+			<tr><td colspan=6 align=right>Total Quantity : </td><td align=right><b>$qty</b></td></tr> 
+		   <tr><td colspan=6 align=right>Total Berat : </td><td align=right><b>$totalberat Kg</b></td></tr>    
+		  </table>";
+	echo "<hr /><p>Data order anda terlampir seperti rincian diatas. <br />
+				   Apabila Anda yakin akan mengorder rincian ini, silahkan klik button Submit Order. <a href='history-transaksi-member.html' >Kembali</a><br />      
+				  </div>
+			  </div>    
+			  </div>
+				<div class='bottom_prod_box_big'></div>
+			  </div>"; 
+	}
+}// Modul simpan transaksi member
+elseif ($_GET[module]=='edittransaksimember'){
+	if(!isset($_SESSION['nik']) && empty($_SESSION['nik'])){
+		  echo "<p><b>MA'AF ANDA BELUM LOGIN ! <BR>UNTUK MENGAKSES MODUL INI ANDA HARUS LOGIN TERLEBIH DAHULU</b></p>";
+	}else{  
+		  $nama_pelanggan 	= $_POST[nama_pelanggan];
+		  $alamat_pelanggan	= $_POST[alamat_pelanggan];
+		  $pic_pelanggan	= $_POST[pic_pelanggan];
+		  $no_hp_pelanggan	= $_POST[no_hp_pelanggan];
+		  $email_pelanggan	= $_POST[email_pelanggan];
+		  $use_for			= $_POST[use_for];
+		  $id_orders		= $_POST[id];
+		  
+		// simpan data pemesanan 
+		mysql_query("UPDATE orders  set nama_pelanggan='".$nama_pelanggan."',alamat_pelanggan='".$alamat_pelanggan."'
+					,pic_pelanggan='".$pic_pelanggan."',no_hp_pelanggan='".$no_hp_pelanggan."',email_pelanggan='".$email_pelanggan."',use_for='".$use_for."' 
+					where id_orders='".$id_orders."'");
+		//print_r(mysql_error());			
+		echo "<script>alert('Edit order berhasil'); window.location = 'history-transaksi-member.html'</script>"; 
+	}
 }else if($_GET[module]=='ceklogin'){
 	$nik = $_POST['nik'];
 	$password = md5($_POST['password']);	

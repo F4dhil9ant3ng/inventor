@@ -37,7 +37,7 @@ class Paging{
 	}
 
 	//untuk admin produk kategori
-	function navHalamanProdukKategori($halaman_aktif, $jmlhalaman){
+	function navHalamanProdukKategori($halaman_aktif, $jmlhalaman,$cari){
 	$link_halaman = "";
 	
 	// Link halaman 1,2,3, ...
@@ -46,7 +46,7 @@ class Paging{
 		$link_halaman .= "<b>$i</b> | ";
 	  }
 	else{
-	  $link_halaman .= "<a href=$_SERVER[PHP_SELF]?module=$_GET[module]&id=".$_GET['id']."&halaman=$i>$i</a> | ";
+	  $link_halaman .= "<a href=$_SERVER[PHP_SELF]?module=$_GET[module]&id=".$_GET['id']."&halaman=$i&cari=".$cari.">$i</a> | ";
 	}
 	$link_halaman .= " ";
 	}
@@ -55,7 +55,7 @@ class Paging{
 
 
 	//untuk admin produk sub lategori
-	function navHalamanProdukSubKategori($halaman_aktif, $jmlhalaman){
+	function navHalamanProdukSubKategori($halaman_aktif, $jmlhalaman,$cari){
 	$link_halaman = "";
 	
 	// Link halaman 1,2,3, ...
@@ -64,13 +64,30 @@ class Paging{
 		$link_halaman .= "<b>$i</b> | ";
 	  }
 	else{
-	  $link_halaman .= "<a href=$_SERVER[PHP_SELF]?module=$_GET[module]&idsub=" .$_GET['idsub']."&halaman=$i>$i</a> | ";
+	  $link_halaman .= "<a href=$_SERVER[PHP_SELF]?module=$_GET[module]&idsub=" .$_GET['idsub']."&halaman=$i&cari=".$cari.">$i</a> | ";
 	}
 	$link_halaman .= " ";
 	}
 	return $link_halaman;
 	}
 
+
+	// Fungsi untuk link halaman 1,2,3 (untuk admin)
+	function navHalamanLaporan($halaman_aktif, $jmlhalaman, $tgl_mulai,$tgl_selesai){
+	$link_halaman = "";
+	
+	// Link halaman 1,2,3, ...
+	for ($i=1; $i<=$jmlhalaman; $i++){
+	  if ($i == $halaman_aktif){
+		$link_halaman .= "<b>$i</b> | ";
+	  }
+	else{
+	  $link_halaman .= "<a href=$_SERVER[PHP_SELF]?module=$_GET[module]&halaman=$i&mulai=$tgl_mulai&selesai=$tgl_selesai>$i</a> | ";
+	}
+	$link_halaman .= " ";
+	}
+	return $link_halaman;
+	}
 
 }
 

@@ -113,6 +113,7 @@ ddsmoothmenu.init({
 	<div id="menu">
 		<div id="smoothmenu2" class="ddsmoothmenu-v">
 			<ul>
+				<li style="visibility:hidden"><a href=#></a><ul></ul></li>
 				<li><a href=?module=home>&#187; Home</a></li>
 				<?php include "menu.php"; ?>
 				<li><a href=logout.php>&#187; Logout</a></li>

@@ -41,8 +41,11 @@ $pdf->closeObject();
 $pdf->addObject($all, 'all');
 
 // Baca input tanggal yang dikirimkan user
-$mulai=$_POST[thn_mulai].'-'.$_POST[bln_mulai].'-'.$_POST[tgl_mulai];
-$selesai=$_POST[thn_selesai].'-'.$_POST[bln_selesai].'-'.$_POST[tgl_selesai];
+/*$mulai=$_POST[thn_mulai].'-'.$_POST[bln_mulai].'-'.$_POST[tgl_mulai];
+$selesai=$_POST[thn_selesai].'-'.$_POST[bln_selesai].'-'.$_POST[tgl_selesai];*/
+
+$mulai=$_POST[tglmulai];
+$selesai=$_POST[tglselesai];
 
 // Query untuk merelasikan kedua tabel di filter berdasarkan tanggal
 $sql = mysql_query("select *,DATE_FORMAT(produk.tgl_masuk, '%d-%m-%Y') as tanggal from produk,kategori,sub_kategori

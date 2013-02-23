@@ -16,7 +16,7 @@
     } 
 
     // tombol stok habis kalau stoknya 0
-    $stok        = $r['stok']-$r['buffer'];
+    $stok        = $r['stok'] - ceil(($r['stok'] * ($r['buffer']/100)));
     $tombolbeli  = "<a class='prod_cart' href=\"aksi.php?module=keranjang&act=tambah&id=$r[id_produk]\">order</a>";
     $tombolhabis = "<span class='prod_cart_habis'>habis</span>";
     if ($stok!=0){

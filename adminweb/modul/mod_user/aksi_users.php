@@ -32,11 +32,11 @@ elseif ($module=='user' AND $act=='input'){
                                 '$pass',
                                 '$_POST[nama_lengkap]',
 								'$_POST[divisi]',
-								'$_POST[unit_kerja]',
+								'$_POST[unit_kerja_lantai]',
 								'$_POST[lokasi_kerja]',
 								'$_POST[nama_manajer]',
                                 '$_POST[email]',
-                                '$_POST[no_telp]')");
+                                '$_POST[telpon]')");
   header('location:../../media.php?module='.$module);
 }
 
@@ -45,12 +45,11 @@ elseif ($module=='user' AND $act=='update'){
   if (empty($_POST[password])) {
     mysql_query("UPDATE kustomer SET nama_lengkap   = '$_POST[nama_lengkap]',
 								  divisi		  = '$_POST[divisi]',	 
-								  unit_kerja     = '$_POST[unit_kerja]',
+								  unit_kerja_lantai     = '$_POST[unit_kerja_lantai]',
 								  lokasi_kerja   = '$_POST[lokasi_kerja]',
 								  nama_manajer   = '$_POST[nama_manajer]',
-                                  email          = '$_POST[email]',
-                                  blokir         = '$_POST[blokir]',  
-                                  no_telp        = '$_POST[no_telp]'  
+                                  email          = '$_POST[email]', 
+                                  telpon        = '$_POST[telpon]'  
                            WHERE  nik     = '$_POST[id]'");
   }
   // Apabila password diubah
@@ -59,12 +58,11 @@ elseif ($module=='user' AND $act=='update'){
     mysql_query("UPDATE kustomer SET password    = '$pass',
                                  nama_lengkap    = '$_POST[nama_lengkap]',
 								 divisi		     = '$_POST[divisi]',	 
-								 unit_kerja      = '$_POST[unit_kerja]',
+								 unit_kerja_lantai      = '$_POST[unit_kerja]',
 								 lokasi_kerja    = '$_POST[lokasi_kerja]',
 								 nama_manajer    = '$_POST[nama_manajer]',
-                                 email           = '$_POST[email]',  
-                                 blokir          = '$_POST[blokir]',  
-                                 no_telp         = '$_POST[no_telp]'  
+                                 email           = '$_POST[email]',   
+                                 telpon         = '$_POST[telpon]'  
                            WHERE nik      = '$_POST[id]'");
   }
   header('location:../../media.php?module='.$module);

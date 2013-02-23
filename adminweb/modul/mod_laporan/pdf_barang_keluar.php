@@ -41,8 +41,11 @@ $pdf->closeObject();
 $pdf->addObject($all, 'all');
 
 // Baca input tanggal yang dikirimkan user
-$mulai=$_POST[thn_mulai].'-'.$_POST[bln_mulai].'-'.$_POST[tgl_mulai];
-$selesai=$_POST[thn_selesai].'-'.$_POST[bln_selesai].'-'.$_POST[tgl_selesai];
+/*$mulai=$_POST[thn_mulai].'-'.$_POST[bln_mulai].'-'.$_POST[tgl_mulai];
+$selesai=$_POST[thn_selesai].'-'.$_POST[bln_selesai].'-'.$_POST[tgl_selesai];*/
+
+$mulai=$_POST[tglmulai];
+$selesai=$_POST[tglselesai];
 
 // Query untuk merelasikan kedua tabel di filter berdasarkan tanggal
 $sql = mysql_query("select orders.id_orders,orders.status_order,DATE_FORMAT(orders.tgl_order, '%d-%m-%Y') as tgl_order,orders.jam_order,
@@ -56,6 +59,7 @@ $sql = mysql_query("select orders.id_orders,orders.status_order,DATE_FORMAT(orde
 					AND orders.tgl_pengambilan BETWEEN '$mulai' AND '$selesai' 
 					order BY orders.tgl_pengambilan DESC");
 $jml = mysql_num_rows($sql);
+
 
 if ($jml > 0){
 $i = 1;

@@ -41,8 +41,11 @@ $pdf->closeObject();
 $pdf->addObject($all, 'all');
 
 // Baca input tanggal yang dikirimkan user
-$mulai=$_POST[thn_mulai].'-'.$_POST[bln_mulai].'-'.$_POST[tgl_mulai];
-$selesai=$_POST[thn_selesai].'-'.$_POST[bln_selesai].'-'.$_POST[tgl_selesai];
+/*$mulai=$_POST[thn_mulai].'-'.$_POST[bln_mulai].'-'.$_POST[tgl_mulai];
+$selesai=$_POST[thn_selesai].'-'.$_POST[bln_selesai].'-'.$_POST[tgl_selesai];*/
+
+$mulai=$_POST[tglmulai];
+$selesai=$_POST[tglselesai];
 
 // Query untuk merelasikan kedua tabel di filter berdasarkan tanggal
 $sql = mysql_query("select orders.id_orders,orders.status_order,DATE_FORMAT(orders.tgl_order, '%d-%m-%Y') as tgl_order,orders.jam_order,
@@ -52,7 +55,7 @@ $sql = mysql_query("select orders.id_orders,orders.status_order,DATE_FORMAT(orde
 					orders_detail.jumlah,produk.harga,orders_detail.keterangan 
 					from orders,orders_detail,produk,sub_kategori 
 					Where orders.id_orders=orders_detail.id_orders
-					AND orders.status_order ='Return'
+					AND orders_detail.status ='Return'
 					AND produk.id_produk=orders_detail.id_produk
 					AND produk.id_kategori=sub_kategori.id_sub_kategori
 					AND orders_detail.tgl_return_barang BETWEEN '$mulai' AND '$selesai' 

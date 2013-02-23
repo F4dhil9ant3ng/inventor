@@ -16,7 +16,8 @@ $act=$_GET[act];
 
 // Hapus produk
 if ($module=='produk' AND $act=='hapus'){
-  $data=mysql_fetch_array(mysql_query("SELECT gambar FROM produk WHERE id_produk='$_GET[id]'"));
+  $data=mysql_fetch_array(mysql_query("SELECT gambar,id_kategori FROM produk WHERE id_produk='$_GET[id]'"));
+  $idkat=$data[id_kategori];
   if ($data['gambar']!=''){
      mysql_query("DELETE FROM produk WHERE id_produk='$_GET[id]'");
      unlink("../../../foto_produk/$_GET[namafile]");   
@@ -25,11 +26,11 @@ if ($module=='produk' AND $act=='hapus'){
   else{
      mysql_query("DELETE FROM produk WHERE id_produk='$_GET[id]'");
   }
-  header('location:../../media.php?module='.$module);
+  header('location:../../media.php?module='.$module.'&idsub='.$idkat);
 
 
   mysql_query("DELETE FROM produk WHERE id_produk='$_GET[id]'");
-  header('location:../../media.php?module='.$module);
+  header('location:../../media.php?module='.$module.'&idsub='.$idkat);
 }
 
 // Input produk
@@ -54,10 +55,11 @@ elseif ($module=='produk' AND $act=='input'){
   $no_po			=$_POST[no_po];
   $buffer			=$_POST[buffer];
   $spesification 	=$_POST[spesification];
+   $tgl_skrg = date("Ymd");
 
   // Apabila ada gambar yang diupload
   if (!empty($lokasi_file)){
-    if ($tipe_file != "image/jpeg" AND $tipe_file != "image/pjpeg"){
+    if ($tipe_file != "foto_produk/jpeg" AND $tipe_file != "foto_produk/pjpeg"){
     echo "<script>window.alert('Upload Gagal, Pastikan File yang di Upload bertipe *.JPG');
         window.location=('../../media.php?module=produk)</script>";
     }
@@ -78,6 +80,7 @@ elseif ($module=='produk' AND $act=='input'){
                                     stok,
 									buffer,
 									spesification,
+									tgl_masuk,
                                     gambar) 
                             VALUES('$merk',
 								   '$model',
@@ -93,7 +96,8 @@ elseif ($module=='produk' AND $act=='input'){
                                    '$stok',
 								   '$buffer',
 								   '$spesification',
-                                   '$nama_file_unik')");
+								   '$tgl_skrg',
+                                   '$nama_file_unik')");	
   header('location:../../media.php?module='.$module.'&idsub='.$_POST[kategori]);
   }
   }
@@ -111,9 +115,10 @@ elseif ($module=='produk' AND $act=='input'){
                                     harga,
                                     stok,
 									buffer,
+									tgl_masuk,
 									spesification) 
                             VALUES('$merk',
-								   '$mode',
+								   '$model',
                                    '$produk_seo',
                                    '$jenis',
                                    '$vendor',
@@ -125,21 +130,23 @@ elseif ($module=='produk' AND $act=='input'){
 								   '$harga',                                 
                                    '$stok',
 								   '$buffer',
+								   '$tgl_skrg',
 								   '$spesification')");
+					   
     /* echo('merk : '. $merk);
 	 echo('<br>model : '.$model);
 	 echo('<br>produk seo : '.$produk_seo);
 	 echo('<br>Berat : '.$berat);
 	 echo('<br>harga : '.$harga);
 	 echo('<br>stok : '.$stok);		
-	 echo('<br>ketrgori : '.$kategori);	*/							   
-  header('location:../../media.php?module='.$module.'&idsub='.$_POST[kategori]);
+	 echo('<br>ketrgori : '.$kategori);	*/	
+   header('location:../../media.php?module='.$module.'&idsub='.$_POST[kategori]);
   }
 }
 
 // Update produk
 elseif ($module=='produk' AND $act=='update'){
-  $lokasi_file    = $_FILES['fupload']['tmp_name'];
+   $lokasi_file    = $_FILES['fupload']['tmp_name'];
   $tipe_file      = $_FILES['fupload']['type'];
   $nama_file      = $_FILES['fupload']['name'];
   $acak           = rand(1,99);
@@ -158,6 +165,7 @@ elseif ($module=='produk' AND $act=='update'){
   $stok 			=$_POST[stok];
   $buffer 			=$_POST[buffer];
   $spesification 	=$_POST[spesification];
+   $tgl_skrg = date("Ymd");
 
   // Apabila gambar tidak diganti
   if (empty($lokasi_file)){
@@ -169,17 +177,18 @@ elseif ($module=='produk' AND $act=='update'){
                                    warehouse_location = '$warehouse_location',
                                    no_po        = '$no_po',
                                    serial_number= '$serial_number',
-                                   kategori   	= '$kategori',
+                                   id_kategori   	= '$kategori',
 								   berat	   	= '$berat',
                                    harga 		= '$harga',
 								   stok	   		=  '$stok',
 								   buffer       = '$buffer',
+								   tgl_masuk 	= '$tgl_skrg',
 								   spesification= '$spesification'
                              WHERE id_produk   	= '$_POST[id]'");
   header('location:../../media.php?module='.$module.'&idsub='.$_POST[kategori]);
   }
   else{
-    if ($tipe_file != "image/jpeg" AND $tipe_file != "image/pjpeg"){
+    if ($tipe_file != "foto_produk/jpeg" AND $tipe_file != "foto_produk/pjpeg"){
     echo "<script>window.alert('Upload Gagal, Pastikan File yang di Upload bertipe *.JPG');
         window.location=('../../media.php?module=produk)</script>";
     }
@@ -193,15 +202,17 @@ elseif ($module=='produk' AND $act=='update'){
                                    warehouse_location = '$warehouse_location',
                                    no_po        = '$no_po',
                                    serial_number= '$serial_number',
-                                   kategori   	= '$kategori',
+                                   id_kategori   = '$kategori',
 								   berat	   	= '$berat',
                                    harga 		= '$harga',
 								   stok	   		=  '$stok',
 								   buffer       = '$buffer',
-								   spesification= '$spesification'
+								   spesification= '$spesification',
+								   tgl_masuk 	= '$tgl_skrg',
                                    gambar      = '$nama_file_unik'   
                              WHERE id_produk   = '$_POST[id]'");
-    header('location:../../media.php?module='.$module.'&idsub='.$_POST[kategori]);
+		 
+    	header('location:../../media.php?module='.$module.'&idsub='.$_POST[kategori]);
     }
   }
 }
